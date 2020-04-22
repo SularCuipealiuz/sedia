@@ -1,11 +1,13 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh_tw">
   <head>
     <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html" ; charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
     <link rel="icon" href="<%= BASE_URL %>favicon.ico">
-    <title><%= htmlWebpackPlugin.options.title %></title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:900">
+    <title>色碟</title>
   </head>
   <body>
     <noscript>
@@ -13,5 +15,33 @@
     </noscript>
     <div id="app"></div>
     <!-- built files will be auto injected -->
+    <script type="text/javascript">
+      function iEsc(){ return false; }
+      function iRec(){ return true; }
+      function DisableKeys() {
+        if(event.ctrlKey || event.shiftKey || event.altKey) {
+          window.event.returnValue=false;
+          iEsc();}
+      }
+      document.ondragstart=iEsc;
+      document.onkeydown=DisableKeys;
+      document.oncontextmenu=iEsc;
+      if (typeof document.onselectstart !="undefined")
+        document.onselectstart=iEsc;
+      else{
+        document.onmousedown=iEsc;
+        document.onmouseup=iRec;
+      }
+      function DisableRightClick(qsyzDOTnet){
+        if (window.Event){
+          if (qsyzDOTnet.which == 2 || qsyzDOTnet.which == 3)
+            iEsc();}
+        else
+        if (event.button == 2 || event.button == 3){
+          event.cancelBubble = true
+          event.returnValue = false;
+          iEsc();}
+      }
+    </script>
   </body>
 </html>

@@ -1,0 +1,383 @@
+<template>
+  <section id="hallPanel" class="flex column">
+    <div class="hall-header flex pull-left">
+      <img class="title" src="../assets/hall/rectangle.png" alt="" />
+      <div class="icon-btn-panel">
+        <div class="icon-btn">
+          <img src="../assets/hall/info-circle.png" alt="" />
+        </div>
+        <div class="icon-btn">
+          <img src="../assets/hall/sign-out.png" alt="" />
+        </div>
+      </div>
+    </div>
+    <div class="flex row desk-panel">
+      <div
+        class="desktop flex column"
+        v-for="(e, i) in desktopObjList"
+        :key="i"
+      >
+        <div class="padding-panel">
+          <div class="odds flex pull-left">
+            <span>賭注賠率：{{ e.control_rate }}</span>
+          </div>
+          <div class="history flex column">
+            <div class="h-header">
+              <img src="../assets/hall/Users.png" alt="" />
+              <span>{{ e.control_rate }}</span>
+              <img src="../assets/hall/database.png" alt="" />
+              <span>{{ e.control_rate }}</span>
+            </div>
+            <div class="h-content flex">
+              <div
+                v-for="(str, i) in e.historyList"
+                :key="i"
+                class="history-plate flex row"
+              >
+                <div class="sedia-history-data">
+                  <span
+                    class="flex row paper-item"
+                    v-for="(p, i) in returnPaperColor(str)"
+                    :key="i"
+                  >
+                    <img v-if="p === '1'" src="../assets/hall/oval-red.png" alt="" />
+                    <img v-else src="../assets/hall/oval-white.png" alt="" />
+                  </span>
+                </div>
+                <div class="label"></div>
+              </div>
+            </div>
+          </div>
+          <img class="border" src="../assets/hall/border.png" alt="" />
+          <img class="girl" :src="imgList[i % 4]" alt="" />
+          <div class="bg-t-panel flex">
+            <img src="../assets/hall/bg-t.png" alt="" />
+          </div>
+          <div class="bg-b-panel flex flex-start">
+            <img src="../assets/hall/bg-b.png" alt="" />
+            <div class="btn-game flex center" @click="openDesktop(e)">
+              <span>進入遊戲</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</template>
+
+<script>
+import { lotterylists, lotteryopencodes } from "@/api/index";
+export default {
+  name: "HallView",
+  created() {
+    const _this = this;
+    lotterylists({
+      cptype: "sedia"
+    }).then(res => {
+      this.desktopTotal = res.data.length;
+      this.desktopObjList = res.data;
+
+      for (let key in _this.desktopObjList) {
+        let historyList = [];
+        lotteryopencodes({
+          num: "10",
+          lotteryname: _this.desktopObjList[key].name
+        }).then(res => {
+          for (let i in res.data) {
+            historyList.push(res.data[i].opencode);
+          }
+          _this.$set(_this.desktopObjList[key], "historyList", historyList);
+        });
+      }
+    });
+  },
+  computed: {},
+  data() {
+    return {
+      desktopTotal: 0,
+      desktopObjList: [],
+      imgList: [
+        require("../assets/hall/girl1.png"),
+        require("../assets/hall/girl2.png"),
+        require("../assets/hall/girl3.png"),
+        require("../assets/hall/girl4.png")
+      ]
+    };
+  },
+  methods: {
+    openDesktop(obj) {
+      this.$store.dispatch("views/openDesktopView", obj).then(e => {
+        //TODO 開啟UI、呼叫入桌API
+        console.log(e);
+      });
+    },
+    returnPaperColor(str) {
+      return str.split(",");
+    }
+  }
+};
+</script>
+
+<style lang="scss" scoped>
+#hallPanel {
+  height: 100%;
+  width: 100%;
+  background-color: #1a0531;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.flex {
+  display: flex;
+}
+
+.pull-left {
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.center {
+  justify-content: center;
+  align-items: center;
+}
+
+.column {
+  flex-direction: column;
+}
+
+.flex-start {
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.row {
+  flex-direction: row;
+}
+
+.hall-header {
+  width: 100%;
+  flex: 0 0 15%;
+  min-height: 65px;
+  position: relative;
+  background-color: black;
+
+  > .icon-btn-panel {
+    position: absolute;
+    right: 0;
+    height: 40%;
+    width: 130px;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    margin-right: 10px;
+
+    > .icon-btn {
+      cursor: pointer;
+      height: 100%;
+
+      > img {
+        height: 100%;
+        width: initial;
+      }
+    }
+  }
+  > .title {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+  }
+
+  > .cover {
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 100%;
+  }
+}
+
+.desk-panel {
+  width: 100%;
+  flex: 0 0 85%;
+  justify-content: flex-start;
+  align-items: center;
+  color: white;
+  overflow-x: auto;
+  margin-top: -8px;
+}
+
+.desktop {
+  width: 33%;
+  min-width: calc(calc(calc(100vh * 0.75) - 30px) * 0.75);
+  z-index: 500;
+  box-sizing: border-box;
+  overflow: hidden;
+  margin-left: 25px;
+  pointer-events: none;
+
+  > .padding-panel {
+    position: relative;
+    padding-bottom: 134%;
+
+    > .history {
+      position: absolute;
+      bottom: 40%;
+      right: 5%;
+      width: 62%;
+      height: 40%;
+      z-index: 201;
+
+      > .h-header {
+        flex: 0 0 20%;
+        background-color: rgba(44, 62, 80, 0.8);
+        display: flex;
+        align-items: center;
+        justify-content: space-evenly;
+
+        > img {
+          height: 60%;
+        }
+
+        > span {
+          height: 100%;
+          font-size: 12px;
+          margin-left: -5px;
+          margin-right: 5px;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        }
+      }
+      > .h-content {
+        flex: 0 0 80%;
+        max-height: 80%;
+        background-color: rgba(0, 0, 0, 0.8);
+        flex-wrap: wrap;
+
+        > .history-plate {
+          width: 50%;
+          height: 20%;
+          background-color: rgba(0, 0, 0, 0.8);
+          > .sedia-history-data {
+            height: 100%;
+            justify-content: space-evenly;
+            display: flex;
+            align-items: center;
+            flex-direction: row;
+            flex: 0 0 80%;
+            background-image: url("../assets/hall/ovalbg.png");
+            background-repeat: no-repeat;
+            background-size: contain;
+            box-sizing: border-box;
+            position: relative;
+
+            > span {
+              height: 80%;
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              font-size: 12px;
+              padding: 2px;
+              box-sizing: border-box;
+              > img {
+                height: 100%;
+                width: auto;
+                box-sizing: border-box;
+              }
+            }
+          }
+          > .label {
+            flex: 0 0 20%;
+            /*background-color: #42b983;*/
+          }
+        }
+      }
+    }
+
+    > .odds {
+      position: absolute;
+      top: 5%;
+      left: 0;
+      right: 0;
+      margin: auto;
+      width: 90%;
+      z-index: 105;
+      background-color: rgba(44, 62, 80, 0.45);
+      padding: 4px 0 4px 15px;
+      box-sizing: border-box;
+      border-radius: 5px;
+      font-size: 14px;
+      > span {
+        color: white;
+      }
+    }
+
+    > .border {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      z-index: 300;
+    }
+
+    > .girl {
+      position: absolute;
+      left: 4%;
+      bottom: 39%;
+      height: 40%;
+      z-index: 200;
+    }
+
+    > .bg-t-panel {
+      height: 60%;
+      width: 95%;
+      box-sizing: border-box;
+      position: absolute;
+      top: 1%;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 101;
+      > img {
+        width: 100%;
+      }
+    }
+    > .bg-b-panel {
+      height: 40%;
+      width: 95%;
+      background-color: #34185d;
+      position: absolute;
+      top: 60%;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      margin: auto;
+      z-index: 100;
+
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      > img {
+        width: 100%;
+      }
+
+      > .btn-game {
+        pointer-events: auto;
+        top: 45%;
+        width: 60%;
+        height: 35%;
+        background-image: url("../assets/hall/btn.png");
+        background-size: contain;
+        background-repeat: no-repeat;
+        z-index: 300;
+        position: absolute;
+        cursor: pointer;
+        > span {
+          margin-top: -4px;
+        }
+      }
+    }
+  }
+}
+</style>
