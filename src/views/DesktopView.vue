@@ -179,22 +179,12 @@ export default {
       }
     });
 
-    const index = this.currIndex - 1
-    this.$set(
-      this.state,
-      "btnAgain",
-      this.desktopView[index].btn_again
-    );
-    this.$set(
-      this.state,
-      "btnCancel",
-      this.desktopView[index].btn_cancel
-    );
-    this.$set(
-      this.state,
-      "btnAgree",
-      this.desktopView[index].btn_agree
-    );
+    this.$bus.$on("clearDesktopMonetAndChips", function() {});
+
+    const index = this.currIndex - 1;
+    this.$set(this.state, "btnAgain", this.desktopView[index].btn_again);
+    this.$set(this.state, "btnCancel", this.desktopView[index].btn_cancel);
+    this.$set(this.state, "btnAgree", this.desktopView[index].btn_agree);
   },
   data() {
     return {
