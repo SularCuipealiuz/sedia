@@ -64,7 +64,7 @@ export function loadopencode(data) {
 
 // 玩家投注
 export function cpbuy(data) {
-  data = jsonToFormData(data);
+  // data = jsonToFormData(data);
   return request({
     url: "/Apijiekou.cpbuy",
     method: "post",

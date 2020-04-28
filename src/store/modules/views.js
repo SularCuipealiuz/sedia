@@ -6,10 +6,27 @@ const state = {
   hint_layout: false,
   black_cover: false,
   hall_view: true,
+  notice_view: true,
   float_ui: false,
+  history_tab: false,
   curr_index: -1,
   username: "",
-  balance: 0
+  balance: 0,
+  stopWatchTime: 0,
+  betsRecordURL: "",
+  playerCount: 0,
+  lotteryName: "",
+  desktopObjList: [],
+  noticeState: {
+    plzChose: false,
+    onReady: false,
+    isOpening: false,
+    pleasePutChip: false,
+    pleaseWaitNext: false,
+    notReady: false
+  },
+  plateChip: 0,
+  curr_full_expect: ""
 };
 
 const mutations = {
@@ -36,7 +53,7 @@ const mutations = {
       history_panel: obj.history_panel,
       btn_again: obj.btn_again,
       btn_cancel: obj.btn_cancel,
-      btn_confirm: obj.btn_confirm,
+      btn_agree: obj.btn_agree,
       chips_plate: obj.chips_plate
     });
   },
@@ -49,6 +66,12 @@ const mutations = {
   SET_FLOAT_UI_STATE: (state, boolean) => {
     state.float_ui = boolean;
   },
+  SET_HISTORY_TAB_STATE: (state, boolean) => {
+    state.history_tab = boolean;
+  },
+  SET_HALL_VIEW_STATE: (state, boolean) => {
+    state.hall_view = boolean;
+  },
   SET_CURR_INDEX: (state, num) => {
     state.curr_index = num;
   },
@@ -57,6 +80,45 @@ const mutations = {
   },
   SET_BALANCE: (state, num) => {
     state.balance = num;
+  },
+  SET_STOPWATCH_VALUE: (state, num) => {
+    state.stopWatchTime = num;
+  },
+  SET_LOG_URL: (state, url) => {
+    state.betsRecordURL = url;
+  },
+  SET_PLAYER_COUNT: (state, num) => {
+    state.playerCount = num;
+  },
+  SET_LOTTERY_NAME: (state, str) => {
+    state.lotteryName = str;
+  },
+  SET_DESKTOP_OBJ: (state, obj) => {
+    state.desktopObjList = obj;
+  },
+  SET_PLZ_CHOSE: (state, boolean) => {
+    state.noticeState.plzChose = boolean;
+  },
+  SET_ON_READY: (state, boolean) => {
+    state.noticeState.onReady = boolean;
+  },
+  SET_IS_OPENING: (state, boolean) => {
+    state.noticeState.isOpening = boolean;
+  },
+  SET_PLEASE_PUT_CHIP: (state, boolean) => {
+    state.noticeState.pleasePutChip = boolean;
+  },
+  SET_PLEASE_WAIT_NEXT: (state, boolean) => {
+    state.noticeState.pleaseWaitNext = boolean;
+  },
+  SET_NOT_READY: (state, boolean) => {
+    state.noticeState.notReady = boolean;
+  },
+  SET_PLATE_CHIP: (state, num) => {
+    state.plateChip = num;
+  },
+  SET_CURR_FULL_EXPECT: (state, str) => {
+    state.curr_full_expect = str;
   }
 };
 
@@ -70,10 +132,14 @@ const actions = {
     let notExist = false;
     commit("RESET_DESKTOP_VIEW");
     commit("SET_FLOAT_UI_STATE", true);
-    commit("SET_CURR_INDEX", obj.id);
+    commit("SET_HALL_VIEW_STATE", false);
+    commit("SET_CURR_INDEX", obj.index);
+    commit("SET_LOTTERY_NAME", obj.lotteryname);
+    commit("SET_PLAYER_COUNT", obj.onlinePlayerCount);
+
     if (state.desktop_view.length > 0) {
       state.desktop_view.some(e => {
-        if (e.index === obj.id) {
+        if (e.index === obj.index) {
           commit("SHOW_DESKTOP_VIEW", e.index);
           notExist = false;
           return true;
@@ -88,9 +154,6 @@ const actions = {
 
     // 進桌必先check用戶狀態（更新錢包等）
     checkislogin().then(res => {
-      if (state.username === "") {
-        commit("SET_USERNAME", res.data.username);
-      }
       commit("SET_BALANCE", res.data.balance);
     });
 
@@ -99,9 +162,9 @@ const actions = {
 
       commit("APPEND_DESKTOP_VIEW", {
         visible: true, // 顯示與否
-        index: obj.id, // 桌號
-        cptype: obj.typeid,
-        lotteryname: obj.name,
+        index: obj.index, // 桌號
+        cptype: obj.cptype,
+        lotteryname: obj.lotteryname,
         money: 0,
         total_bet: 0,
         win: 0,
@@ -110,7 +173,7 @@ const actions = {
         history_panel: false,
         btn_again: true,
         btn_cancel: true,
-        btn_confirm: true,
+        btn_agree: true,
         chips_plate: true
       });
     }
@@ -123,6 +186,59 @@ const actions = {
   closeDesktopView: ({ commit }) => {
     commit("RESET_DESKTOP_VIEW");
     commit("SET_FLOAT_UI_STATE", false);
+    commit("SET_HISTORY_TAB_STATE", false);
+    commit("SET_HALL_VIEW_STATE", true);
+    commit("SET_PLATE_CHIP", 0);
+  },
+  setStopWatchTimer: ({ commit }, num) => {
+    commit("SET_STOPWATCH_VALUE", num);
+  },
+  setUserName: ({ commit }, name) => {
+    commit("SET_USERNAME", name);
+  },
+  setBalance: ({ commit }, value) => {
+    commit("SET_BALANCE", value);
+  },
+  setLogUrl: ({ commit }, url) => {
+    commit("SET_LOG_URL", url);
+  },
+  setDesktopObjList: ({ commit }, obj) => {
+    commit("SET_DESKTOP_OBJ", obj);
+  },
+  setHistoryTab: ({ commit }, boolean) => {
+    commit("SET_HISTORY_TAB_STATE", boolean);
+  },
+  disableAllNoticeState: ({ commit }) => {
+    commit("SET_PLZ_CHOSE", false);
+    commit("SET_ON_READY", false);
+    commit("SET_IS_OPENING", false);
+    commit("SET_PLEASE_PUT_CHIP", false);
+    commit("SET_PLEASE_WAIT_NEXT", false);
+    commit("SET_NOT_READY", false);
+  },
+  openPlzChose: ({ commit }) => {
+    commit("SET_PLZ_CHOSE", true);
+  },
+  openOnReady: ({ commit }) => {
+    commit("SET_ON_READY", true);
+  },
+  openIsOpening: ({ commit }) => {
+    commit("SET_IS_OPENING", true);
+  },
+  openPleasePutChip: ({ commit }) => {
+    commit("SET_PLEASE_PUT_CHIP", true);
+  },
+  openPleaseWaitNext: ({ commit }) => {
+    commit("SET_PLEASE_WAIT_NEXT", true);
+  },
+  openNotReady: ({ commit }) => {
+    commit("SET_NOT_READY", true);
+  },
+  setChips: ({ commit }, num) => {
+    commit("SET_PLATE_CHIP", num);
+  },
+  setCurrFullExpect: ({ commit }, num) => {
+    commit("SET_CURR_FULL_EXPECT", num);
   }
 };
 

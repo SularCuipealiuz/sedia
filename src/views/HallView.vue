@@ -24,27 +24,32 @@
           <div class="history flex column">
             <div class="h-header">
               <img src="../assets/hall/Users.png" alt="" />
-              <span>{{ e.control_rate }}</span>
+              <span>{{ e.onlinePlayerCount }}</span>
               <img src="../assets/hall/database.png" alt="" />
               <span>{{ e.control_rate }}</span>
             </div>
             <div class="h-content flex">
               <div
-                v-for="(str, i) in e.historyList"
+                v-for="(str, i) in sliceHistoryList(e.historyList)"
                 :key="i"
                 class="history-plate flex row"
               >
+                <div class="label">{{ i + 1 }}</div>
                 <div class="sedia-history-data">
                   <span
                     class="flex row paper-item"
                     v-for="(p, i) in returnPaperColor(str)"
                     :key="i"
                   >
-                    <img v-if="p === '1'" src="../assets/hall/oval-red.png" alt="" />
+                    <img
+                      v-if="p === '1'"
+                      src="../assets/hall/oval-red.png"
+                      alt=""
+                      style="margin-top: -1px;"
+                    />
                     <img v-else src="../assets/hall/oval-white.png" alt="" />
                   </span>
                 </div>
-                <div class="label"></div>
               </div>
             </div>
           </div>
@@ -66,7 +71,9 @@
 </template>
 
 <script>
-import { lotterylists, lotteryopencodes } from "@/api/index";
+import { lotterylists, lotteryopencodes, lotterytimes } from "@/api/index";
+import { mapGetters } from "vuex";
+
 export default {
   name: "HallView",
   created() {
@@ -74,28 +81,34 @@ export default {
     lotterylists({
       cptype: "sedia"
     }).then(res => {
-      this.desktopTotal = res.data.length;
-      this.desktopObjList = res.data;
+      _this.desktopTotal = res.data.length;
+      let payload = res.data.map(e => {
+        return {
+          index: e.id ? e.id : "",
+          lotteryname: e.name ? e.name : "",
+          cptype: e.typeid ? e.typeid : "",
+          title: e.title ? e.title : "",
+          control_rate: e.control_rate ? e.control_rate : ""
+        };
+      });
+      this.$store.dispatch("views/setDesktopObjList", payload).then(() => {
+        console.log("close");
+      });
 
-      for (let key in _this.desktopObjList) {
-        let historyList = [];
-        lotteryopencodes({
-          num: "10",
-          lotteryname: _this.desktopObjList[key].name
-        }).then(res => {
-          for (let i in res.data) {
-            historyList.push(res.data[i].opencode);
-          }
-          _this.$set(_this.desktopObjList[key], "historyList", historyList);
-        });
-      }
+      this.updateHallView();
     });
   },
-  computed: {},
+  computed: {
+    ...mapGetters([
+      "stopWatchTime",
+      "desktopView",
+      "currIndex",
+      "desktopObjList"
+    ])
+  },
   data() {
     return {
       desktopTotal: 0,
-      desktopObjList: [],
       imgList: [
         require("../assets/hall/girl1.png"),
         require("../assets/hall/girl2.png"),
@@ -105,14 +118,111 @@ export default {
     };
   },
   methods: {
+    sliceHistoryList(list) {
+      if (list !== undefined) {
+        if (list.length > 10) {
+          return list.slice(0, 10);
+        } else {
+          return list;
+        }
+      } else {
+        return [];
+      }
+    },
     openDesktop(obj) {
       this.$store.dispatch("views/openDesktopView", obj).then(e => {
         //TODO 開啟UI、呼叫入桌API
-        console.log(e);
+        console.log("本桌资讯：", e);
       });
     },
     returnPaperColor(str) {
       return str.split(",");
+    },
+    startTimer() {
+      const _this = this;
+      this.timer = setInterval(function() {
+        _this.$store.dispatch(
+          "views/setStopWatchTimer",
+          parseInt(_this.stopWatchTime) - 1
+        );
+        if (_this.stopWatchTime === 0) {
+          _this.stopTimer().then(() => {
+            console.log("over");
+            // 當時間結束時，可以晚個幾秒鐘刷新大廳
+            // 撈到開獎為止才刷新時間
+            //TODO 撈到開獎結果後才進行下一輪
+
+            setTimeout(function() {
+              _this.updateHallView();
+            }, 4000);
+          });
+        }
+      }, 1000);
+    },
+    async stopTimer() {
+      await clearInterval(this.timer);
+    },
+    updateHallView() {
+      const _this = this;
+      for (let key in _this.desktopObjList) {
+        let historyList = [];
+        lotteryopencodes({
+          num: "50",
+          lotteryname: _this.desktopObjList[key].lotteryname
+        }).then(res => {
+          for (let i in res.data) {
+            historyList.push(res.data[i].opencode);
+          }
+          _this.$set(_this.desktopObjList[key], "historyList", historyList);
+        });
+
+        lotterytimes({
+          cptype: "sedia",
+          lotteryname: _this.desktopObjList[key].lotteryname
+        }).then(res => {
+          _this.$set(
+            _this.desktopObjList[key],
+            "onlinePlayerCount",
+            res.data.onlinePlayerCount
+          );
+          _this.$set(
+            _this.desktopObjList[key],
+            "playerBetsInfo",
+            res.data.playerBetsInfo
+          );
+          _this.$set(
+            _this.desktopObjList[key],
+            "remainTime",
+            res.data.remainTime
+          );
+          this.$set(
+            _this.desktopObjList[key],
+            "currFullExpect",
+            res.data.currFullExpect
+          );
+          this.$set(
+            _this.desktopObjList[key],
+            "lastFullExpect",
+            res.data.lastFullExpect
+          );
+          if (key === "0") {
+            //拿到時間後，將第一桌時間送至store（以第一桌看齊）
+            _this.$store
+              .dispatch(
+                "views/setStopWatchTimer",
+                _this.desktopObjList[0].remainTime
+              )
+              .then(() => {
+                _this.startTimer();
+              });
+
+            _this.$store.dispatch(
+              "views/setCurrFullExpect",
+              _this.desktopObjList[0].currFullExpect
+            );
+          }
+        });
+      }
     }
   }
 };
@@ -253,6 +363,7 @@ export default {
         max-height: 80%;
         background-color: rgba(0, 0, 0, 0.8);
         flex-wrap: wrap;
+        align-content: flex-start;
 
         > .history-plate {
           width: 50%;
@@ -272,22 +383,21 @@ export default {
             position: relative;
 
             > span {
-              height: 80%;
+              height: 100%;
               display: flex;
               justify-content: center;
               align-items: center;
-              font-size: 12px;
-              padding: 2px;
-              box-sizing: border-box;
+
               > img {
-                height: 100%;
-                width: auto;
-                box-sizing: border-box;
+                height: 9px;
+                width: 9px;
               }
             }
           }
           > .label {
-            flex: 0 0 20%;
+            flex: 0 0 30%;
+            font-size: 10px;
+            margin: 0 -3px;
             /*background-color: #42b983;*/
           }
         }

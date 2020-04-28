@@ -3,31 +3,87 @@
     <div class="desk-cover">
       <div class="desk-chip-cover flex">
         <div class="flex row left-side">
-          <div class="desk-chip-panel flex center">
+          <div
+            class="desk-chip-panel flex center"
+            @click="putMoneyOnBoard('sedia_even')"
+          >
             {{ desktop.sedia_even.title }}
             <br />
             1:{{ desktop.sedia_even.maxrate }}
+
+            <div class="put-chips-panel"></div>
+            <div class="put-money-panel" v-show="formData.sedia_even.price > 0">
+              <span class="put-value">{{ formData.sedia_even.price }}</span>
+            </div>
           </div>
           <div class="desk-holder"></div>
-          <div class="desk-chip-panel flex center">
+          <div
+            class="desk-chip-panel flex center"
+            @click="putMoneyOnBoard('sedia_fourth_r')"
+          >
             1:{{ desktop.sedia_fourth_r.maxrate }}
+
+            <div class="put-chips-panel"></div>
+            <div
+              class="put-money-panel"
+              v-show="formData.sedia_fourth_r.price > 0"
+            >
+              <span class="put-value">{{ formData.sedia_fourth_r.price }}</span>
+            </div>
           </div>
-          <div class="desk-chip-panel flex center">
+          <div
+            class="desk-chip-panel flex center"
+            @click="putMoneyOnBoard('sedia_third_r')"
+          >
             1:{{ desktop.sedia_third_r.maxrate }}
+            <div class="put-chips-panel"></div>
+            <div
+              class="put-money-panel"
+              v-show="formData.sedia_third_r.price > 0"
+            >
+              <span class="put-value">{{ formData.sedia_third_r.price }}</span>
+            </div>
           </div>
         </div>
         <div class="flex row right-side">
           <div class="desk-holder"></div>
-          <div class="desk-chip-panel flex center">
+          <div
+            class="desk-chip-panel flex center"
+            @click="putMoneyOnBoard('sedia_odd')"
+          >
             {{ desktop.sedia_odd.title }}
             <br />
             1:{{ desktop.sedia_odd.maxrate }}
+            <div class="put-chips-panel"></div>
+            <div class="put-money-panel" v-show="formData.sedia_odd.price > 0">
+              <span class="put-value">{{ formData.sedia_odd.price }}</span>
+            </div>
           </div>
-          <div class="desk-chip-panel flex center">
+          <div
+            class="desk-chip-panel flex center"
+            @click="putMoneyOnBoard('sedia_third_w')"
+          >
             1:{{ desktop.sedia_third_w.maxrate }}
+            <div class="put-chips-panel"></div>
+            <div
+              class="put-money-panel"
+              v-show="formData.sedia_third_w.price > 0"
+            >
+              <span class="put-value">{{ formData.sedia_third_w.price }}</span>
+            </div>
           </div>
-          <div class="desk-chip-panel flex center">
+          <div
+            class="desk-chip-panel flex center"
+            @click="putMoneyOnBoard('sedia_fourth_w')"
+          >
             1:{{ desktop.sedia_fourth_w.maxrate }}
+            <div class="put-chips-panel"></div>
+            <div
+              class="put-money-panel"
+              v-show="formData.sedia_fourth_w.price > 0"
+            >
+              <span class="put-value">{{ formData.sedia_fourth_w.price }}</span>
+            </div>
           </div>
         </div>
       </div>
@@ -70,10 +126,20 @@
 </template>
 
 <script>
-import { lotteryrates } from "@/api";
+import { lotteryrates, cpbuy } from "@/api";
+import { mapGetters } from "vuex";
 
 export default {
   name: "DesktopView",
+  computed: {
+    ...mapGetters([
+      "plateChip",
+      "currIndex",
+      "currFullExpect",
+      "lotteryName",
+      "desktopView"
+    ])
+  },
   created() {
     //TODO 玩法、時間
 
@@ -92,6 +158,44 @@ export default {
   props: {
     deskInfo: Object
   },
+  mounted() {
+    const _this = this;
+    this.$bus.$on("btnAgree", function() {
+      if (_this.deskInfo.index === _this.currIndex) {
+        let list = [];
+        for (let key in _this.formData) {
+          if (_this.formData[key].price > 0) {
+            list.push(_this.formData[key]);
+          }
+        }
+
+        cpbuy({
+          orderList: list,
+          expect: _this.currFullExpect,
+          lotteryname: _this.lotteryName
+        }).then(e => {
+          console.log(e);
+        });
+      }
+    });
+
+    const index = this.currIndex - 1
+    this.$set(
+      this.state,
+      "btnAgain",
+      this.desktopView[index].btn_again
+    );
+    this.$set(
+      this.state,
+      "btnCancel",
+      this.desktopView[index].btn_cancel
+    );
+    this.$set(
+      this.state,
+      "btnAgree",
+      this.desktopView[index].btn_agree
+    );
+  },
   data() {
     return {
       desktop: {
@@ -101,12 +205,44 @@ export default {
         sedia_third_r: "",
         sedia_third_w: "",
         sedia_fourth_w: ""
+      },
+      formData: {
+        sedia_even: {
+          playid: "sedia_even",
+          price: 0
+        },
+        sedia_odd: {
+          playid: "sedia_odd",
+          price: 0
+        },
+        sedia_fourth_r: {
+          playid: "sedia_fourth_r",
+          price: 0
+        },
+        sedia_third_r: {
+          playid: "sedia_third_r",
+          price: 0
+        },
+        sedia_third_w: {
+          playid: "sedia_third_w",
+          price: 0
+        },
+        sedia_fourth_w: {
+          playid: "sedia_fourth_w",
+          price: 0
+        }
+      },
+      state: {
+        btnAgain: false,
+        btnCancel: false,
+        btnAgree: false
       }
     };
   },
   methods: {
-    testOn() {},
-    testOff() {}
+    putMoneyOnBoard(id) {
+      this.formData[id].price += this.plateChip;
+    }
   }
 };
 </script>
@@ -125,6 +261,7 @@ $main-color: #34185d;
   background-repeat: no-repeat;
   background-size: auto 96%;
   background-position-x: center;
+  pointer-events: none;
 }
 
 .desk-cover {
@@ -138,6 +275,7 @@ $main-color: #34185d;
   background-repeat: no-repeat;
   background-size: auto 60%;
   background-position-x: center;
+  pointer-events: none;
 
   display: flex;
   justify-content: center;
@@ -163,6 +301,61 @@ $main-color: #34185d;
         height: 50%;
         pointer-events: auto;
         cursor: pointer;
+        position: relative;
+        > .put-money-panel {
+          position: absolute;
+          left: 20px;
+          bottom: 10px;
+          width: 50%;
+          height: 30px;
+          transform: skew(-2.5deg, 0deg) !important;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+
+          > .put-value {
+            display: inline-block;
+            outline: none;
+            font-family: inherit;
+            font-size: 1em;
+            box-sizing: border-box;
+            border-radius: 0.3em;
+            line-height: 1.5em;
+            text-transform: uppercase;
+            padding: 0 1em;
+            opacity: 0.85;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.16),
+              0 1px 2px rgba(110, 80, 20, 0.4), inset 0 -1px 1px 1px #8b4208,
+              inset 0 -1px 1px 1.5px #fae385;
+            background-image: linear-gradient(
+              160deg,
+              #a54e07,
+              #b47e11,
+              #fef1a2,
+              #bc881b,
+              #a54e07
+            );
+            color: #783205;
+            border: 1px solid #a55d07;
+            text-shadow: 0 2px 2px #fae385;
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+            background-size: 100% 100%;
+            background-position: center;
+          }
+        }
+
+        > .put-chips-panel {
+          position: absolute;
+          left: 5px;
+          top: 5px;
+          display: inline-flex;
+          justify-content: left;
+          align-items: center;
+          height: 30px;
+          pointer-events: none;
+          width: 100px;
+        }
       }
     }
 
@@ -199,9 +392,10 @@ $main-color: #34185d;
   width: 100%;
   background-color: transparent;
   z-index: 200;
+  pointer-events: none;
 
   > .bowl-panel {
-    zoom: .4;
+    transform: scale(0.4);
     width: 100%;
     height: 100%;
     position: relative;
@@ -209,18 +403,21 @@ $main-color: #34185d;
     justify-content: center;
     align-items: center;
     z-index: 200;
+    top: -30%;
     .bowl {
       position: absolute;
       z-index: 200;
       width: auto !important;
-      top: 0%;
+      top: 0;
+      height: 80%;
     }
 
     .plate {
       position: absolute;
       z-index: 100;
       width: auto !important;
-      top: 2%;
+      top: 6%;
+      height: 100%;
     }
 
     .paper {
@@ -243,7 +440,7 @@ $main-color: #34185d;
     }
 
     .paper-panel-css {
-      top: 11%;
+      top: 30%;
     }
 
     .paper-panel-1 {

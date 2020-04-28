@@ -35,7 +35,6 @@ export default {
     };
   },
   mounted() {
-    console.log("in");
     let test = this.$store.getters.hintType;
     test = "1";
 

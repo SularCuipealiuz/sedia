@@ -19,12 +19,15 @@
         </div>
       </div>
       <div class="header-bar-right">
-        <div class="play-list">玩家清單<span class="highlight">15</span>人</div>
+        <div class="play-list">
+          玩家清單<span class="highlight">{{ playerCount }}</span
+          >人
+        </div>
       </div>
     </div>
     <div class="ui-body flex row">
       <div class="ui-left flex column">
-        <div class="float-btn flex center">
+        <div class="float-btn flex center" @click="go2LogPage">
           <img src="../assets/table/reader.svg" alt="" />
         </div>
         <div class="float-btn flex center" @click="goToHall">
@@ -36,8 +39,46 @@
         </div>
       </div>
       <div class="ui-right flex column">
-        <div class="float-btn flex center">
+        <div
+          class="float-btn flex center history-tab-btn"
+          :class="{ 'open-history-tab': historyTab }"
+          @click="toggleHistoryList"
+        >
           <span>色碟紀錄表</span>
+        </div>
+        <div class="history-tab" :class="{ 'open-history-tab': historyTab }">
+          <div
+            class="flex history-row"
+            v-for="(e, i) in historyList"
+            :key="i"
+            style="color: white"
+          >
+            <span class="flex center">{{
+              (i + 1).toString().padStart(2, "0")
+            }}</span>
+            <span
+              class="flex center"
+              :class="{
+                even: isEvenOdd(e),
+                odd: !isEvenOdd(e)
+              }"
+              >{{ isEvenOdd(e) == 0 ? "雙" : "單" }}</span
+            >
+            <div class="flex row">
+              <span
+                class="paper-item"
+                v-for="(p, l) in returnPaperColor(e)"
+                :key="l"
+              >
+                <img
+                  v-if="p === '1'"
+                  src="../assets/dish/red-paper.png"
+                  alt=""
+                />
+                <img v-else src="../assets/dish/white-paper.png" alt="" />
+              </span>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -80,15 +121,30 @@
           <span>取消押注</span>
           <img src="../assets/table/close-24px.svg" alt="" />
         </div>
-        <div class="float-btn flex column">
+        <div class="float-btn flex column" @click="btnAgree">
           <span>確認押注</span>
           <img src="../assets/table/check-24px.svg" alt="" />
+        </div>
+      </div>
+    </div>
+    <div class="ui-float">
+      <div class="stop-watch-panel">
+        <div class="stop-watch">
+          <img class="ten-digit clock" :src="showTenDigitTime" alt="" />
+          <img class="digit clock" :src="showDigitTime" alt="" />
+          <div class="background">
+            <img src="../assets/alarm/time-background.png" alt="" />
+          </div>
         </div>
       </div>
       <div class="plate-panel flex">
         <div class="plate-bg">
           <div class="chip-panel flex chip-evenly">
-            <div class="chips-img">
+            <div
+              class="chips-img"
+              :class="{ 'chip-active': plateChip === 100 }"
+              @click="toggleChips(100)"
+            >
               <img
                 class="chip-100"
                 src="../assets/chips/100.png"
@@ -99,7 +155,11 @@
                 <div class="shine"></div>
               </div>
             </div>
-            <div class="chips-img">
+            <div
+              class="chips-img"
+              :class="{ 'chip-active': plateChip === 500 }"
+              @click="toggleChips(500)"
+            >
               <img
                 class="chip-500"
                 src="../assets/chips/500.png"
@@ -110,7 +170,11 @@
                 <div class="shine"></div>
               </div>
             </div>
-            <div class="chips-img">
+            <div
+              class="chips-img"
+              :class="{ 'chip-active': plateChip === 1000 }"
+              @click="toggleChips(1000)"
+            >
               <img
                 class="chip-1000"
                 src="../assets/chips/1000.png"
@@ -121,7 +185,11 @@
                 <div class="shine"></div>
               </div>
             </div>
-            <div class="chips-img ">
+            <div
+              class="chips-img"
+              :class="{ 'chip-active': plateChip === 5000 }"
+              @click="toggleChips(5000)"
+            >
               <img
                 class="chip-5000"
                 src="../assets/chips/5000.png"
@@ -132,7 +200,11 @@
                 <div class="shine"></div>
               </div>
             </div>
-            <div class="chips-img">
+            <div
+              class="chips-img"
+              :class="{ 'chip-active': plateChip === 10000 }"
+              @click="toggleChips(10000)"
+            >
               <div class="shine-panel">
                 <div class="shine"></div>
               </div>
@@ -147,7 +219,6 @@
         </div>
       </div>
     </div>
-
   </section>
 </template>
 
@@ -157,9 +228,60 @@ import { mapGetters } from "vuex";
 export default {
   name: "FloatUserInterface",
   computed: {
-    ...mapGetters(["desktopView", "currIndex", "username", "balance"])
+    ...mapGetters([
+      "desktopView",
+      "currIndex",
+      "username",
+      "balance",
+      "stopWatchTime",
+      "betsRecordURL",
+      "playerCount",
+      "lotteryName",
+      "desktopObjList",
+      "historyTab",
+      "plateChip"
+    ]),
+    showTenDigitTime() {
+      return require(`../assets/alarm/time-${parseInt(
+        this.stopWatchTime / 10
+      )}.png`);
+    },
+    showDigitTime() {
+      return require(`../assets/alarm/time-${parseInt(
+        this.stopWatchTime % 10
+      )}.png`);
+    }
   },
+  data() {
+    return {
+      timer: null,
+      historyList: []
+    };
+  },
+  mounted() {},
   methods: {
+    btnAgree() {
+      this.$bus.$emit("btnAgree");
+    },
+    btnCancel() {
+      this.$bus.$emit("btnCancel");
+    },
+    btnAgain() {
+      this.$bus.$emit("btnAgain");
+    },
+    toggleChips(num) {
+      this.$store.dispatch("views/setChips", num);
+    },
+    toggleHistoryList() {
+      this.$store.dispatch("views/setHistoryTab", !this.historyTab);
+      const _this = this;
+      _this.$set(
+        _this,
+        "historyList",
+        _this.desktopObjList.find(e => e.index === _this.currIndex).historyList
+      );
+      //TODO 问题，没有实际绑定到原始对象（find过程中已经另产新对象）
+    },
     goToHall() {
       this.$store.dispatch("views/closeDesktopView").then(() => {
         console.log("close");
@@ -172,6 +294,17 @@ export default {
         const _this = this;
         return list.find(e => e.index === _this.currIndex);
       }
+    },
+    go2LogPage() {
+      window.open(this.betsRecordURL);
+    },
+    returnPaperColor(str) {
+      return str.toString().split(",");
+    },
+    isEvenOdd(str) {
+      let s = str.toString().split(",");
+      let b = s.filter(e => e === "1");
+      return b.length % 2;
     }
   }
 };
@@ -238,6 +371,7 @@ $highlight: #ffc51a;
 .ui-body,
 .ui-footer {
   width: 100%;
+  z-index: 200;
 }
 
 .ui-header {
@@ -251,6 +385,7 @@ $highlight: #ffc51a;
 
   .header-bar-left {
     padding-top: 10px;
+
     .name-panel {
       position: relative;
       height: 50%;
@@ -276,6 +411,7 @@ $highlight: #ffc51a;
         position: absolute;
         left: 35px;
         font-size: 16px;
+
         > .value {
           margin-top: 2px;
         }
@@ -462,15 +598,23 @@ $highlight: #ffc51a;
     justify-content: center;
     align-items: flex-end;
 
-    > .float-btn {
+    > .history-tab-btn {
       border-top-left-radius: 7px;
       border-bottom-left-radius: 7px;
       height: 145px;
       width: 40px;
       writing-mode: vertical-lr;
-      font-size: 20px;
+      font-size: 18px;
       color: $main-color;
       font-weight: 800;
+      position: fixed;
+      right: 0;
+      top: 30%;
+      transition: right 0.35s linear 0s;
+
+      &.open-history-tab {
+        right: 130px;
+      }
     }
   }
 }
@@ -481,6 +625,7 @@ $highlight: #ffc51a;
   max-height: 80px;
   font-size: 1.7vw;
   position: relative;
+
   > .footer-bar-left {
     flex: 0 0 50%;
 
@@ -488,6 +633,7 @@ $highlight: #ffc51a;
     justify-content: flex-start;
     align-items: flex-end;
   }
+
   > .footer-bar-right {
     flex: 0 0 45%;
 
@@ -512,6 +658,7 @@ $highlight: #ffc51a;
       border-top-left-radius: 5px;
     }
   }
+
   > .footer-bar {
     z-index: 100;
     height: 100%;
@@ -607,85 +754,204 @@ $highlight: #ffc51a;
       }
     }
   }
+}
 
-  > .plate-panel {
-    position: fixed;
+.ui-float {
+  height: 100%;
+  width: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 100;
+
+  .stop-watch-panel {
+    bottom: 10px;
+    right: 10px;
+    position: absolute;
+
+    width: 80px;
+    height: 80px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-right: 6px;
+    z-index: 100;
+
+    .stop-watch {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: row;
+
+      .clock {
+        margin: 0px 2px;
+        width: 25%;
+        z-index: 150;
+
+        > img {
+          width: 100%;
+        }
+      }
+
+      .background {
+        z-index: 100;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        right: 0;
+        position: absolute;
+
+        > img {
+          width: 100%;
+          height: 100%;
+        }
+      }
+    }
+  }
+  .plate-panel {
+    position: absolute;
     bottom: 0;
+    left: 0;
     width: 100%;
     height: 100%;
     pointer-events: none;
 
     justify-content: center;
     align-items: flex-end;
+  }
+  .plate-bg {
+    position: relative;
+    bottom: 0;
+    height: 25%;
+    width: 100%;
+    background-image: url("../assets/table/plate.png");
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-position-x: center;
+    background-position-y: bottom;
 
-    .plate-bg {
-      position: relative;
-      height: 25%;
-      width: 100%;
-      background-image: url("../assets/table/plate.png");
-      background-repeat: no-repeat;
-      background-size: contain;
-      background-position-x: center;
-      background-position-y: bottom;
+    .chip-panel {
+      position: absolute;
+      margin: auto;
+      left: 0;
+      right: 0;
+      height: 100%;
+      width: calc(calc(617 * calc(calc(100vh * 0.25) / 164)) * 0.9);
 
-      .chip-panel {
+      .shine-panel {
         position: absolute;
-        margin: auto;
-        left: 0;
-        right: 0;
-        height: 100%;
-        width: calc(calc(617 * calc(calc(100vh * 0.25) / 164)) * 0.9);
+        width: 70%;
+        height: 70%;
+        border-radius: 100%;
+        z-index: 400;
+        overflow: hidden;
+        pointer-events: none;
+      }
 
-        .shine-panel {
-          position: absolute;
-          width: 70%;
-          height: 70%;
-          border-radius: 100%;
-          z-index: 400;
-          overflow: hidden;
-          pointer-events: none;
+      > .chips-img {
+        z-index: 150;
+        flex: 0 0 19%;
+        position: relative;
+        overflow: hidden;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+        top: -25px;
+        pointer-events: auto;
+
+        &.chip-active {
+          transform: scale(1.25) rotateY(360deg);
+          background: -webkit-radial-gradient(
+            rgba(255, 255, 255, 0.2),
+            rgba(255, 255, 255, 0) 70%
+          );
+          transition-duration: 0.5s;
         }
 
-        > .chips-img {
-          z-index: 150;
-          flex: 0 0 19%;
-          position: relative;
-          overflow: hidden;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          cursor: pointer;
-          top: -25px;
-          pointer-events: auto;
-          > img {
-            height: 100%;
-            width: 100%;
-          }
-        }
-
-        > .chips-img .shine::before {
-          position: absolute;
-          top: 0;
-          left: 0;
-          width: 100%;
+        > img {
           height: 100%;
-          background: rgba(255, 255, 255, 0.5);
-          content: "";
-          -webkit-transition: -webkit-transform 0.6s;
-          transition: transform 0.45s;
-          opacity: 0;
-          -webkit-transform: scale3d(1.9, 1.4, 1) rotate3d(0, 0, 1, 45deg)
-            translate3d(0, -100%, 0);
-          transform: scale3d(1.9, 1.4, 1) rotate3d(0, 0, 1, 45deg)
-            translate3d(0, -100%, 0);
-          z-index: 300;
+          width: 100%;
         }
-        > .chips-img:hover .shine::before {
-          opacity: 1;
-          -webkit-transform: scale3d(1.9, 1.4, 1) rotate3d(0, 0, 1, 45deg)
-            translate3d(0, 100%, 0);
-          transform: scale3d(1.9, 1.4, 1) rotate3d(0, 0, 1, 45deg)
-            translate3d(0, 100%, 0);
+      }
+
+      > .chips-img .shine::before {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(255, 255, 255, 0.5);
+        content: "";
+        -webkit-transition: -webkit-transform 0.6s;
+        transition: transform 0.45s;
+        opacity: 0;
+        -webkit-transform: scale3d(1.9, 1.4, 1) rotate3d(0, 0, 1, 45deg)
+          translate3d(0, -100%, 0);
+        transform: scale3d(1.9, 1.4, 1) rotate3d(0, 0, 1, 45deg)
+          translate3d(0, -100%, 0);
+        z-index: 300;
+      }
+
+      > .chips-img:hover .shine::before {
+        opacity: 1;
+        -webkit-transform: scale3d(1.9, 1.4, 1) rotate3d(0, 0, 1, 45deg)
+          translate3d(0, 100%, 0);
+        transform: scale3d(1.9, 1.4, 1) rotate3d(0, 0, 1, 45deg)
+          translate3d(0, 100%, 0);
+      }
+    }
+  }
+}
+
+.history-tab {
+  position: fixed;
+  top: 0;
+  right: -130px;
+  height: 100%;
+  width: 130px;
+  background-color: #34185d;
+  opacity: 0.75;
+
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  flex-direction: column;
+  transition: right 0.35s linear 0s;
+  z-index: 200;
+  overflow-y: auto;
+  pointer-events: auto;
+  padding: 10px 0;
+  box-sizing: border-box;
+
+  &.open-history-tab {
+    right: 0;
+  }
+
+  > .history-row {
+    margin: 2px 0;
+    min-height: 15px;
+    height: 15px;
+    width: 100%;
+    padding: 0 8px;
+    justify-content: space-between;
+    box-sizing: border-box;
+    font-size: 16px;
+    > .odd {
+      color: #f4ff2a;
+    }
+    > .even {
+      color: #c48dff;
+    }
+    > .row {
+      > .paper-item {
+        height: 100%;
+        width: auto;
+        > img {
+          height: 15px;
+          width: 15px;
         }
       }
     }
