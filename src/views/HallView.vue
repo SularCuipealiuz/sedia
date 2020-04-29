@@ -14,7 +14,7 @@
     <div class="flex row desk-panel">
       <div
         class="desktop flex column"
-        v-for="(e, i) in desktopObjList"
+        v-for="(e, i) in 1"
         :key="i"
       >
         <div class="padding-panel">
@@ -71,32 +71,33 @@
 </template>
 
 <script>
-import { lotterylists, lotteryopencodes, lotterytimes } from "@/api/index";
+// import { lotterylists, lotteryopencodes, lotterytimes } from "@/api/index";
+import { lotteryopencodes, lotterytimes } from "@/api/index";
 import { mapGetters } from "vuex";
 
 export default {
   name: "HallView",
   created() {
-    const _this = this;
-    lotterylists({
-      cptype: "sedia"
-    }).then(res => {
-      _this.desktopTotal = res.data.length;
-      let payload = res.data.map(e => {
-        return {
-          index: e.id ? e.id : "",
-          lotteryname: e.name ? e.name : "",
-          cptype: e.typeid ? e.typeid : "",
-          title: e.title ? e.title : "",
-          control_rate: e.control_rate ? e.control_rate : ""
-        };
-      });
-      this.$store.dispatch("views/setDesktopObjList", payload).then(() => {
-        console.log("close");
-      });
-
-      this.updateHallView();
-    });
+    // const _this = this;
+    // lotterylists({
+    //   cptype: "sedia"
+    // }).then(res => {
+    //   _this.desktopTotal = res.data.length;
+    //   let payload = res.data.map(e => {
+    //     return {
+    //       index: e.id ? e.id : "",
+    //       lotteryname: e.name ? e.name : "",
+    //       cptype: e.typeid ? e.typeid : "",
+    //       title: e.title ? e.title : "",
+    //       control_rate: e.control_rate ? e.control_rate : ""
+    //     };
+    //   });
+    //   this.$store.dispatch("views/setDesktopObjList", payload).then(() => {
+    //     console.log("close");
+    //   });
+    //
+    //   this.updateHallView();
+    // });
   },
   computed: {
     ...mapGetters([

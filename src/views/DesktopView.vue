@@ -137,7 +137,13 @@ export default {
       "currIndex",
       "currFullExpect",
       "lotteryName",
-      "desktopView"
+      "desktopView",
+      "plzChose",
+      "onReady",
+      "isOpening",
+      "pleasePutChip",
+      "pleaseWaitNext",
+      "notReady"
     ])
   },
   created() {
@@ -162,6 +168,7 @@ export default {
     const _this = this;
     this.$bus.$on("btnAgree", function() {
       if (_this.deskInfo.index === _this.currIndex) {
+        // 如果store紀錄的桌號與當前桌相同
         let list = [];
         for (let key in _this.formData) {
           if (_this.formData[key].price > 0) {
@@ -174,7 +181,10 @@ export default {
           expect: _this.currFullExpect,
           lotteryname: _this.lotteryName
         }).then(e => {
+          // 當投注成功後，應顯示onReady狀態、鎖住桌面投注、鎖住選籌碼、鎖住三個按鈕、
           console.log(e);
+
+          this.$store.dispatch("openOnReady");
         });
       }
     });
