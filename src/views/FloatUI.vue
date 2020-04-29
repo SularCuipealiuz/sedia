@@ -113,15 +113,25 @@
         </div>
       </div>
       <div class="footer-bar footer-bar-right flex row">
-        <div class="float-btn flex column">
+        <div
+          class="float-btn flex column"
+          :class="{ 'disable-button': !btn_again }"
+        >
           <span>延續上把</span>
           <img src="../assets/table/refresh-24px.svg" alt="" />
         </div>
-        <div class="float-btn flex column">
+        <div
+          class="float-btn flex column"
+          :class="{ 'disable-button': !btn_cancel }"
+        >
           <span>取消押注</span>
           <img src="../assets/table/close-24px.svg" alt="" />
         </div>
-        <div class="float-btn flex column" @click="btnAgree">
+        <div
+          class="float-btn flex column"
+          :class="{ 'disable-button': !btn_agree }"
+          @click="btnAgree"
+        >
           <span>確認押注</span>
           <img src="../assets/table/check-24px.svg" alt="" />
         </div>
@@ -139,7 +149,10 @@
       </div>
       <div class="plate-panel flex">
         <div class="plate-bg">
-          <div class="chip-panel flex chip-evenly">
+          <div
+            class="chip-panel flex chip-evenly"
+            :class="{ 'disable-chip-panel': !chips_plate }"
+          >
             <div
               class="chips-img"
               :class="{ 'chip-active': plateChip === 100 }"
@@ -255,10 +268,39 @@ export default {
   data() {
     return {
       timer: null,
-      historyList: []
+      historyList: [],
+      btn_again: false,
+      btn_cancel: false,
+      btn_agree: false,
+      chips_plate: false
     };
   },
-  mounted() {},
+  mounted() {
+    const _this = this;
+    this.$bus.$on("refreshBtnState", function() {
+      console.log("進");
+      _this.$set(
+        _this,
+        "btn_again",
+        _this.desktopView[_this.currIndex - 1].btn_again
+      );
+      _this.$set(
+        _this,
+        "btn_cancel",
+        _this.desktopView[_this.currIndex - 1].btn_cancel
+      );
+      _this.$set(
+        _this,
+        "btn_agree",
+        _this.desktopView[_this.currIndex - 1].btn_agree
+      );
+      _this.$set(
+        _this,
+        "chips_plate",
+        _this.desktopView[_this.currIndex - 1].chips_plate
+      );
+    });
+  },
   methods: {
     btnAgree() {
       this.$bus.$emit("btnAgree");
@@ -283,6 +325,10 @@ export default {
       //TODO 问题，没有实际绑定到原始对象（find过程中已经另产新对象）
     },
     goToHall() {
+      this.$store.dispatch("views/disableAllNoticeState").then(() => {
+        console.log("closeNotice");
+      });
+
       this.$store.dispatch("views/closeDesktopView").then(() => {
         console.log("close");
       });
@@ -563,6 +609,8 @@ $highlight: #ffc51a;
       height: 30px;
       color: white;
       background-color: rgba(0, 0, 0, 0.45);
+      padding: 0 5px;
+      font-size: 14px;
     }
   }
 }
@@ -810,6 +858,7 @@ $highlight: #ffc51a;
       }
     }
   }
+
   .plate-panel {
     position: absolute;
     bottom: 0;
@@ -821,6 +870,7 @@ $highlight: #ffc51a;
     justify-content: center;
     align-items: flex-end;
   }
+
   .plate-bg {
     position: relative;
     bottom: 0;
@@ -939,16 +989,20 @@ $highlight: #ffc51a;
     justify-content: space-between;
     box-sizing: border-box;
     font-size: 16px;
+
     > .odd {
       color: #f4ff2a;
     }
+
     > .even {
       color: #c48dff;
     }
+
     > .row {
       > .paper-item {
         height: 100%;
         width: auto;
+
         > img {
           height: 15px;
           width: 15px;
@@ -956,5 +1010,17 @@ $highlight: #ffc51a;
       }
     }
   }
+}
+
+.disable-chip-panel > * {
+  pointer-events: none !important;
+  cursor: auto !important;
+  filter: brightness(0.6) !important;
+}
+
+.disable-button {
+  pointer-events: none !important;
+  cursor: auto !important;
+  filter: brightness(0.6) !important;
 }
 </style>

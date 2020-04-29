@@ -101,6 +101,18 @@ const mutations = {
   },
   SET_ON_READY: (state, boolean) => {
     state.noticeState.onReady = boolean;
+    state.desktop_view[state.curr_index - 1].btn_again = false;
+    state.desktop_view[state.curr_index - 1].btn_cancel = false;
+    state.desktop_view[state.curr_index - 1].btn_agree = false;
+  },
+  SET_BTN_AGAIN: (state, boolean) => {
+    state.desktop_view[state.curr_index - 1].btn_again = boolean;
+  },
+  SET_BTN_CANCEL: (state, boolean) => {
+    state.desktop_view[state.curr_index - 1].btn_cancel = boolean;
+  },
+  SET_BTN_AGREE: (state, boolean) => {
+    state.desktop_view[state.curr_index - 1].btn_agree = boolean;
   },
   SET_IS_OPENING: (state, boolean) => {
     state.noticeState.isOpening = boolean;
@@ -119,6 +131,9 @@ const mutations = {
   },
   SET_CURR_FULL_EXPECT: (state, str) => {
     state.curr_full_expect = str;
+  },
+  SET_CHIPS_PLATE: (state, boolean) => {
+    state.desktop_view[state.curr_index - 1].chips_plate = boolean;
   }
 };
 
@@ -221,9 +236,17 @@ const actions = {
   },
   openOnReady: ({ commit }) => {
     commit("SET_ON_READY", true);
+    commit("SET_BTN_AGAIN", false);
+    commit("SET_BTN_CANCEL", false);
+    commit("SET_BTN_AGREE", false);
+    commit("SET_CHIPS_PLATE", false);
   },
   openIsOpening: ({ commit }) => {
     commit("SET_IS_OPENING", true);
+    commit("SET_BTN_AGAIN", false);
+    commit("SET_BTN_CANCEL", false);
+    commit("SET_BTN_AGREE", false);
+    commit("SET_CHIPS_PLATE", false);
   },
   openPleasePutChip: ({ commit }) => {
     commit("SET_PLEASE_PUT_CHIP", true);

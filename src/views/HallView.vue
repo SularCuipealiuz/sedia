@@ -14,7 +14,7 @@
     <div class="flex row desk-panel">
       <div
         class="desktop flex column"
-        v-for="(e, i) in 1"
+        v-for="(e, i) in desktopObjList"
         :key="i"
       >
         <div class="padding-panel">
@@ -71,40 +71,53 @@
 </template>
 
 <script>
-// import { lotterylists, lotteryopencodes, lotterytimes } from "@/api/index";
-import { lotteryopencodes, lotterytimes } from "@/api/index";
+import {
+  lotterylists,
+  lotteryopencodes,
+  lotterytimes,
+  betsContent
+} from "@/api/index";
 import { mapGetters } from "vuex";
 
 export default {
   name: "HallView",
   created() {
-    // const _this = this;
-    // lotterylists({
-    //   cptype: "sedia"
-    // }).then(res => {
-    //   _this.desktopTotal = res.data.length;
-    //   let payload = res.data.map(e => {
-    //     return {
-    //       index: e.id ? e.id : "",
-    //       lotteryname: e.name ? e.name : "",
-    //       cptype: e.typeid ? e.typeid : "",
-    //       title: e.title ? e.title : "",
-    //       control_rate: e.control_rate ? e.control_rate : ""
-    //     };
-    //   });
-    //   this.$store.dispatch("views/setDesktopObjList", payload).then(() => {
-    //     console.log("close");
-    //   });
-    //
-    //   this.updateHallView();
-    // });
+    const _this = this;
+    lotterylists({
+      cptype: "sedia"
+    }).then(res => {
+      _this.desktopTotal = res.data.length;
+      let payload = res.data.map(e => {
+        return {
+          index: e.id ? e.id : "",
+          lotteryname: e.name ? e.name : "",
+          cptype: e.typeid ? e.typeid : "",
+          title: e.title ? e.title : "",
+          control_rate: e.control_rate ? e.control_rate : ""
+        };
+      });
+      this.$store.dispatch("views/setDesktopObjList", payload).then(() => {
+        console.log("close");
+      });
+
+      this.updateHallView();
+    });
+
+    betsContent({
+      expect: _this.currFullExpect,
+      lotteryname: _this.lotteryName
+    }).then(e => {
+      console.log("betsContent", e);
+    });
   },
   computed: {
     ...mapGetters([
       "stopWatchTime",
       "desktopView",
       "currIndex",
-      "desktopObjList"
+      "desktopObjList",
+      "currFullExpect",
+      "lotteryName"
     ])
   },
   data() {
@@ -131,9 +144,11 @@ export default {
       }
     },
     openDesktop(obj) {
+      const _this = this;
       this.$store.dispatch("views/openDesktopView", obj).then(e => {
         //TODO 開啟UI、呼叫入桌API
         console.log("本桌资讯：", e);
+        _this.$bus.$emit("refreshBtnState");
       });
     },
     returnPaperColor(str) {
@@ -149,6 +164,21 @@ export default {
         if (_this.stopWatchTime === 0) {
           _this.stopTimer().then(() => {
             console.log("over");
+
+            setTimeout(function() {
+              _this.$store.dispatch("views/disableAllNoticeState").then(() => {
+                console.log("closeNotice");
+                _this.$store.dispatch("views/openIsOpening").then(() => {
+                  console.log("openIsOpening");
+                  _this.$bus.$emit("refreshBtnState");
+
+                  setTimeout(function() {
+                    _this.$bus.$emit("scaleMove");
+                  }, 1000);
+                });
+              });
+            }, 1000);
+
             // 當時間結束時，可以晚個幾秒鐘刷新大廳
             // 撈到開獎為止才刷新時間
             //TODO 撈到開獎結果後才進行下一輪

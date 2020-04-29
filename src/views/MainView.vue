@@ -65,9 +65,9 @@ export default {
     loginDo({ name: "fcacbt0001", pass: "123456" }).then(e => {
       console.log(e);
       checkislogin().then(res => {
-        // this.$store.dispatch("views/setUserName", res.data.username);
+        this.$store.dispatch("views/setUserName", res.data.username);
         this.$store.dispatch("views/setLogUrl", res.betsRecordURL);
-        // this.$store.dispatch("views/setBalance", res.data.balance);
+        this.$store.dispatch("views/setBalance", res.data.balance);
       });
     });
   },

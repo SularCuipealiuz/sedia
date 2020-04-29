@@ -1,7 +1,10 @@
 <template>
   <section class="room-desktop">
     <div class="desk-cover">
-      <div class="desk-chip-cover flex">
+      <div
+        class="desk-chip-cover flex"
+        :class="{ 'disable-chip-cover-panel': !desk_chip_cover }"
+      >
         <div class="flex row left-side">
           <div
             class="desk-chip-panel flex center"
@@ -88,32 +91,118 @@
         </div>
       </div>
     </div>
-    <div class="animation-layout">
+    <div class="animation-layout" :class="{ 'scale-move': ani.scaleMove, 'scale-move-out': ani.scaleMoveOut }">
       <div class="bowl-panel dish-animation ">
-        <img class="bowl " src="../assets/dish/bowl.png" alt="" />
-        <img class="plate " src="../assets/dish/plate.png" alt="" />
-        <div class="paper-panel-css paper-panel-1 fadein-animation non-visible">
+        <img
+          class="bowl"
+          :class="{ 'open-animation': ani.openBowl }"
+          src="../assets/dish/bowl.png"
+          alt=""
+        />
+        <img class="plate" src="../assets/dish/plate.png" alt="" />
+        <div
+          v-show="paperGroup.p1"
+          class="paper-panel-css paper-panel-1 fadein-animation non-visible"
+        >
           <div class="relative" style="height: 100%; width: 100%">
-            <div class="paper paper-1 red-paper"></div>
-            <div class="paper paper-2 red-paper"></div>
-            <div class="paper paper-3 red-paper"></div>
-            <div class="paper paper-4 red-paper"></div>
+            <div
+              class="paper paper-1"
+              :class="{
+                'red-paper': paper.p1 === '0',
+                'white-paper': paper.p1 === '1'
+              }"
+            ></div>
+            <div
+              class="paper paper-2"
+              :class="{
+                'red-paper': paper.p2 === '0',
+                'white-paper': paper.p2 === '1'
+              }"
+            ></div>
+            <div
+              class="paper paper-3"
+              :class="{
+                'red-paper': paper.p3 === '0',
+                'white-paper': paper.p3 === '1'
+              }"
+            ></div>
+            <div
+              class="paper paper-4"
+              :class="{
+                'red-paper': paper.p4 === '0',
+                'white-paper': paper.p4 === '1'
+              }"
+            ></div>
           </div>
         </div>
-        <div class="paper-panel-css paper-panel-2 fadein-animation non-visible">
+        <div
+          v-show="paperGroup.p2"
+          class="paper-panel-css paper-panel-2 fadein-animation non-visible"
+        >
           <div class="relative" style="height: 100%; width: 100%">
-            <div class="paper paper-1 red-paper"></div>
-            <div class="paper paper-2 red-paper"></div>
-            <div class="paper paper-3 red-paper"></div>
-            <div class="paper paper-4 red-paper"></div>
+            <div
+              class="paper paper-1"
+              :class="{
+                'red-paper': paper.p1 === '0',
+                'white-paper': paper.p1 === '1'
+              }"
+            ></div>
+            <div
+              class="paper paper-2"
+              :class="{
+                'red-paper': paper.p2 === '0',
+                'white-paper': paper.p2 === '1'
+              }"
+            ></div>
+            <div
+              class="paper paper-3"
+              :class="{
+                'red-paper': paper.p3 === '0',
+                'white-paper': paper.p3 === '1'
+              }"
+            ></div>
+            <div
+              class="paper paper-4"
+              :class="{
+                'red-paper': paper.p4 === '0',
+                'white-paper': paper.p4 === '1'
+              }"
+            ></div>
           </div>
         </div>
-        <div class="paper-panel-css paper-panel-3 fadein-animation non-visible">
+        <div
+          v-show="paperGroup.p3"
+          class="paper-panel-css paper-panel-3 fadein-animation non-visible"
+        >
           <div class="relative" style="height: 100%; width: 100%">
-            <div class="paper paper-1 red-paper"></div>
-            <div class="paper paper-2 red-paper"></div>
-            <div class="paper paper-3 red-paper"></div>
-            <div class="paper paper-4 red-paper"></div>
+            <div
+              class="paper paper-1"
+              :class="{
+                'red-paper': paper.p1 === '0',
+                'white-paper': paper.p1 === '1'
+              }"
+            ></div>
+            <div
+              class="paper paper-2"
+              :class="{
+                'red-paper': paper.p2 === '0',
+                'white-paper': paper.p2 === '1'
+              }"
+            ></div>
+            <div
+              class="paper paper-3"
+              :class="{
+                'red-paper': paper.p3 === '0',
+                'white-paper': paper.p3 === '1'
+              }"
+            ></div>
+            <div
+              class="paper paper-4"
+              :class="{
+                'red-paper': paper.p4 === '0',
+                'white-paper': paper.p4 === '1'
+              }"
+            ></div>
           </div>
         </div>
       </div>
@@ -126,7 +215,7 @@
 </template>
 
 <script>
-import { lotteryrates, cpbuy } from "@/api";
+import { lotteryrates, cpbuy, loadopencode } from "@/api";
 import { mapGetters } from "vuex";
 
 export default {
@@ -166,6 +255,36 @@ export default {
   },
   mounted() {
     const _this = this;
+
+    function openCode() {
+      loadopencode({
+        expect: _this.currFullExpect,
+        lotteryname: _this.lotteryName
+      }).then(e => {
+        if (e.sign === false) {
+          setTimeout(function() {
+            openCode();
+          }, 500);
+        } else {
+          setTimeout(function() {
+            console.log("開獎資料:", e.data);
+            _this.openBowl();
+            _this.setPaperByResponse(e.data);
+            setTimeout(function() {
+              _this.ani.scaleMove = false;
+              _this.ani.openBowl = false;
+              _this.clearDesktopMonetAndChips();
+            }, 4000);
+          }, 1000);
+        }
+      });
+    }
+
+    this.$bus.$on("scaleMove", function() {
+      _this.ani.scaleMove = true;
+      openCode();
+    });
+
     this.$bus.$on("btnAgree", function() {
       if (_this.deskInfo.index === _this.currIndex) {
         // 如果store紀錄的桌號與當前桌相同
@@ -176,6 +295,14 @@ export default {
           }
         }
 
+        _this.$store.dispatch("views/disableAllNoticeState").then(() => {
+          console.log("closeNotice");
+          _this.$store.dispatch("views/openOnReady").then(e => {
+            console.log("openOnReady", e);
+            _this.$bus.$emit("refreshBtnState");
+          });
+        });
+
         cpbuy({
           orderList: list,
           expect: _this.currFullExpect,
@@ -183,14 +310,16 @@ export default {
         }).then(e => {
           // 當投注成功後，應顯示onReady狀態、鎖住桌面投注、鎖住選籌碼、鎖住三個按鈕、
           console.log(e);
-
-          this.$store.dispatch("openOnReady");
         });
       }
     });
-
-    this.$bus.$on("clearDesktopMonetAndChips", function() {});
-
+    this.$bus.$on("refreshBtnState", function() {
+      _this.$set(
+        _this,
+        "desk_chip_cover",
+        _this.desktopView[_this.currIndex - 1].chips_plate
+      );
+    });
     const index = this.currIndex - 1;
     this.$set(this.state, "btnAgain", this.desktopView[index].btn_again);
     this.$set(this.state, "btnCancel", this.desktopView[index].btn_cancel);
@@ -198,6 +327,12 @@ export default {
   },
   data() {
     return {
+      desk_chip_cover: false,
+      ani: {
+        scaleMove: false,
+        scaleMoveOut: false,
+        openBowl: false
+      },
       desktop: {
         sedia_even: "",
         sedia_odd: "",
@@ -236,12 +371,133 @@ export default {
         btnAgain: false,
         btnCancel: false,
         btnAgree: false
+      },
+      paperGroup: {
+        p1: false,
+        p2: false,
+        p3: false
+      },
+      paper: {
+        p1: 0,
+        p2: 0,
+        p3: 0,
+        p4: 0
       }
     };
   },
   methods: {
     putMoneyOnBoard(id) {
       this.formData[id].price += this.plateChip;
+    },
+    openBowl() {
+      console.log("開晚");
+      const _this = this;
+      _this.ani.openBowl = true;
+    },
+    setPaperByResponse(data) {
+      const _this = this;
+      const openCodeList = data.opencode.split(",");
+
+      this.paperGroup.p1 = false;
+      this.paperGroup.p2 = false;
+      this.paperGroup.p3 = false;
+
+      this.paper.p1 = openCodeList[0];
+      this.paper.p2 = openCodeList[1];
+      this.paper.p3 = openCodeList[2];
+      this.paper.p4 = openCodeList[3];
+
+      const r = Math.random() * 100;
+
+      if (r <= 33) {
+        _this.paperGroup.p1 = true;
+      } else if (r > 33 && r <= 66) {
+        _this.paperGroup.p2 = true;
+      } else {
+        _this.paperGroup.p3 = true;
+      }
+
+      // function f(panel) {
+      //   const list = [_this.paper.p1, _this.paper.p2, _this.paper.p3, _this.paper.p4];
+      //
+      //   for (let i = 0; i < list.length; i++) {
+      //     openCodeList[i] === "1"
+      //       ? list[i].classList.add("red-paper")
+      //       : list[i].classList.add("white-paper");
+      //   }
+      //
+      //   const num = panel.querySelectorAll(".red-paper").length;
+      //
+      //   setTimeout(function() {
+      //     if (num % 2 === 0) {
+      //       $(".even-font").addClass("font-active");
+      //       $("#sedia_even").addClass("box-highlight");
+      //     } else {
+      //       $(".odd-font").addClass("font-active");
+      //       $("#sedia_odd").addClass("box-highlight");
+      //     }
+      //
+      //     if (num === 0) {
+      //       $("#sedia_fourth_w").addClass("box-highlight");
+      //     } else if (num === 1) {
+      //       $("#sedia_third_w").addClass("box-highlight");
+      //     } else if (num === 3) {
+      //       $("#sedia_third_r").addClass("box-highlight");
+      //     } else if (num === 4) {
+      //       $("#sedia_fourth_r").addClass("box-highlight");
+      //     }
+      //   }, 4000);
+      //
+      //   setTimeout(function() {
+      //     $(".font-active").removeClass("font-active");
+      //     setTimeout(function() {
+      //       let info = {
+      //         expect: startingCurrFullExpect - 1,
+      //         lotteryname: "mysedia"
+      //       };
+      //       const response = api("betsResult", info);
+      //
+      //       response.done(e => {
+      //         //TODO
+      //
+      //         api("checkislogin", {}).done(function(res) {
+      //           const data = JSON.parse(res);
+      //           if (data.sign !== true) {
+      //             showErrorMessage(data.message);
+      //           }
+      //           nowMoney = data.data.balance;
+      //           countUp.update(nowMoney);
+      //         });
+      //
+      //         shouldShowMoney = true;
+      //
+      //         let reg = /,+-$/gi;
+      //         const d = JSON.parse(e);
+      //         const n = d.data.amount.toString().replace(reg, "");
+      //         if (parseInt(n) !== 0) {
+      //           $(".betsResult").addClass("open");
+      //           if (parseInt(n) > 0) {
+      //             $(".betsValue").css("color", "green");
+      //           } else {
+      //             $(".betsValue").css("color", "red");
+      //           }
+      //           $(".betsValue")[0].innerHTML = d.data.amount;
+      //           winMoneyValue = d.data.amount > 0 ? d.data.amount : 0;
+      //           winMoney.update(winMoneyValue);
+      //         }
+      //       });
+      //     }, 100);
+      //   }, 6000);
+      //   setTimeout(function() {
+      //     $(".box-highlight").removeClass("box-highlight");
+      //   }, 9000);
+      // }
+    },
+    clearDesktopMonetAndChips() {
+      const _this = this;
+      for (let key in _this.formData) {
+        _this.formData[key].price = 0;
+      }
     }
   }
 };
@@ -523,6 +779,144 @@ $main-color: #34185d;
         top: 80px;
       }
     }
+  }
+}
+.disable-chip-cover-panel * {
+  pointer-events: none !important;
+  cursor: auto !important;
+}
+
+.bowl-shake-animation {
+  animation: aniShake linear 0.8s;
+  animation-delay: 1.1s;
+  animation-iteration-count: 2;
+  transform-origin: 50% 50%;
+}
+
+@keyframes aniShake {
+  0% {
+    transform: translate(0px, 0px);
+  }
+  10% {
+    transform: translate(0px, 10px);
+  }
+  20% {
+    transform: translate(0px, -15px);
+  }
+  35% {
+    transform: translate(0px, -35px);
+  }
+  40% {
+    transform: translate(0px, 10px);
+  }
+  50% {
+    transform: translate(0px, -15px);
+  }
+  60% {
+    transform: translate(0px, -35px);
+  }
+  70% {
+    transform: translate(0px, 15px);
+  }
+  80% {
+    transform: translate(0px, 0px);
+  }
+  90% {
+    transform: translate(0px, 0px);
+  }
+  100% {
+    transform: translate(0px, 0px);
+  }
+}
+
+.open-animation {
+  animation: aniOpen ease-in 3s;
+  animation-iteration-count: 1;
+  transform-origin: 50% 50%;
+  animation-fill-mode: forwards;
+}
+
+@keyframes aniOpen {
+  0% {
+    transform: translate(0px, 0px) rotate(0deg);
+  }
+  5% {
+    transform: translate(0px, 5px) rotate(0deg);
+  }
+  10% {
+    transform: translate(0px, 0px) rotate(0deg);
+  }
+  35% {
+    transform: translate(-63px, -63px) rotate(-20deg);
+  }
+  37% {
+    transform: translate(-120px, -160px) rotate(-30deg);
+    opacity: 1;
+  }
+  55% {
+    transform: translate(-120px, -160px) rotate(-30deg);
+    opacity: 0;
+  }
+  100% {
+    transform: translate(-120px, -160px) rotate(-30deg);
+    opacity: 0;
+  }
+}
+
+.static-animation {
+  animation: aniStatic linear 4s;
+  animation-iteration-count: 1;
+  transform-origin: 50% 50%;
+}
+
+@keyframes aniStatic {
+  0% {
+    transform: translate(-120px, -160px) rotate(-30deg);
+  }
+  100% {
+    transform: translate(-120px, -160px) rotate(-30deg);
+  }
+}
+
+/*.scale-move {*/
+/*  animation: scalePanelAni ease-out 0.8s, scalePanelBackAni linear 0.8s;*/
+/*  animation-delay: 0.2s, 5.4s;*/
+/*  animation-iteration-count: 1;*/
+/*  transform-origin: 50% 50%;*/
+/*  animation-fill-mode: forwards;*/
+/*}*/
+
+.scale-move {
+  animation: scalePanelAni ease-out 0.8s;
+  animation-delay: 0.2s;
+  animation-iteration-count: 1;
+  transform-origin: 50%;
+  animation-fill-mode: forwards;
+}
+
+.scale-move-out {
+  animation: scalePanelBackAni ease-out 0.8s;
+  animation-delay: 0.2s;
+  animation-iteration-count: 1;
+  transform-origin: 50%;
+  animation-fill-mode: forwards;
+}
+
+@keyframes scalePanelAni {
+  0% {
+    transform: translate(0px, 0px) scale(1);
+  }
+  100% {
+    transform: translate(0px, 100px) scale(1.3);
+  }
+}
+
+@keyframes scalePanelBackAni {
+  0% {
+    transform: translate(0px, 100px) scale(1.3);
+  }
+  100% {
+    transform: translate(0px, 0px) scale(1);
   }
 }
 </style>
