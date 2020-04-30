@@ -94,7 +94,7 @@
           <div class="flex column total-bet-box">
             <span>Total Bet</span>
             <div class="flex center black-box">
-              <span>{{ getDesktopInfo(desktopView).total_bet }}</span>
+              <span>{{ total_bet }}</span>
             </div>
           </div>
           <div class="flex column win-value-box">
@@ -123,6 +123,7 @@
         <div
           class="float-btn flex column"
           :class="{ 'disable-button': !btn_cancel }"
+          @click="btnCancel"
         >
           <span>取消押注</span>
           <img src="../assets/table/close-24px.svg" alt="" />
@@ -272,7 +273,8 @@ export default {
       btn_again: false,
       btn_cancel: false,
       btn_agree: false,
-      chips_plate: false
+      chips_plate: false,
+      total_bet: 0
     };
   },
   mounted() {
@@ -300,13 +302,19 @@ export default {
         _this.desktopView[_this.currIndex - 1].chips_plate
       );
     });
+    this.$bus.$on("updateTotalBet", function(totalBetValue) {
+      _this.total_bet = totalBetValue;
+      _this.$store.dispatch("views/setTotalBet", totalBetValue);
+    });
   },
   methods: {
     btnAgree() {
       this.$bus.$emit("btnAgree");
     },
     btnCancel() {
+      this.total_bet = 0;
       this.$bus.$emit("btnCancel");
+      // 取消壓注需要清空籌碼、金錢、Total、DeskView裡面的值
     },
     btnAgain() {
       this.$bus.$emit("btnAgain");
@@ -325,12 +333,14 @@ export default {
       //TODO 问题，没有实际绑定到原始对象（find过程中已经另产新对象）
     },
     goToHall() {
+      const _this = this
       this.$store.dispatch("views/disableAllNoticeState").then(() => {
         console.log("closeNotice");
       });
 
       this.$store.dispatch("views/closeDesktopView").then(() => {
-        console.log("close");
+        console.log("close room");
+        _this.total_bet = 0
       });
     },
     getDesktopInfo(list) {

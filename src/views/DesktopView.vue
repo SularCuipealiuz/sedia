@@ -91,7 +91,13 @@
         </div>
       </div>
     </div>
-    <div class="animation-layout" :class="{ 'scale-move': ani.scaleMove, 'scale-move-out': ani.scaleMoveOut }">
+    <div
+      class="animation-layout"
+      :class="{
+        'scale-move': ani.scaleMove,
+        'scale-move-out': ani.scaleMoveOut
+      }"
+    >
       <div class="bowl-panel dish-animation ">
         <img
           class="bowl"
@@ -215,7 +221,7 @@
 </template>
 
 <script>
-import { lotteryrates, cpbuy, loadopencode } from "@/api";
+import { lotteryrates, cpbuy, loadopencode, checkislogin } from "@/api";
 import { mapGetters } from "vuex";
 
 export default {
@@ -232,7 +238,8 @@ export default {
       "isOpening",
       "pleasePutChip",
       "pleaseWaitNext",
-      "notReady"
+      "notReady",
+      "balance"
     ])
   },
   created() {
@@ -268,23 +275,38 @@ export default {
         } else {
           setTimeout(function() {
             console.log("開獎資料:", e.data);
-            _this.openBowl();
             _this.setPaperByResponse(e.data);
+
             setTimeout(function() {
-              _this.ani.scaleMove = false;
-              _this.ani.openBowl = false;
-              _this.clearDesktopMonetAndChips();
-            }, 4000);
+              _this.openBowl();
+              setTimeout(function() {
+                _this.ani.scaleMoveOut = true;
+
+                // 開始復歸動作
+                setTimeout(function() {
+                  // 還原動畫（恢復初始）
+                  // 將按鈕狀態復原、準備下一局、檢查是否有投注（是否開啟延續上把）
+
+                  _this.$bus.$emit("updateTotalBet", 0);
+                  _this.clearDesktopMonetAndChips();
+                  _this.ani.scaleMoveOut = false;
+                  _this.ani.scaleMove = false;
+                  _this.ani.openBowl = false;
+                  _this.$bus.$emit("refreshBtnState");
+
+                  console.log("復歸完成");
+                  _this.startToNewGame();
+                }, 3000);
+              }, 4000);
+            }, 1000);
           }, 1000);
         }
       });
     }
-
     this.$bus.$on("scaleMove", function() {
       _this.ani.scaleMove = true;
       openCode();
     });
-
     this.$bus.$on("btnAgree", function() {
       if (_this.deskInfo.index === _this.currIndex) {
         // 如果store紀錄的桌號與當前桌相同
@@ -295,23 +317,40 @@ export default {
           }
         }
 
-        _this.$store.dispatch("views/disableAllNoticeState").then(() => {
-          console.log("closeNotice");
-          _this.$store.dispatch("views/openOnReady").then(e => {
-            console.log("openOnReady", e);
-            _this.$bus.$emit("refreshBtnState");
-          });
-        });
+        // 如果有下注
+        if (list.length > 0) {
+          // 下注後，重新向後端取得資料刷新錢包
+          setTimeout(function() {
+            checkislogin().then(res => {
+              _this.$store.dispatch("views/setBalance", res.data.balance);
+            });
+          }, 1000);
 
-        cpbuy({
-          orderList: list,
-          expect: _this.currFullExpect,
-          lotteryname: _this.lotteryName
-        }).then(e => {
-          // 當投注成功後，應顯示onReady狀態、鎖住桌面投注、鎖住選籌碼、鎖住三個按鈕、
-          console.log(e);
-        });
+          _this.$store.dispatch("views/disableAllNoticeState").then(() => {
+            console.log("closeNotice");
+            _this.$store.dispatch("views/openOnReady").then(e => {
+              console.log("openOnReady", e);
+              _this.$bus.$emit("refreshBtnState");
+            });
+          });
+
+          cpbuy({
+            orderList: list,
+            expect: _this.currFullExpect,
+            lotteryname: _this.lotteryName
+          }).then(e => {
+            // 當投注成功後，應顯示onReady狀態、鎖住桌面投注、鎖住選籌碼、鎖住三個按鈕、
+            console.log(e);
+            _this.put_list = list;
+          });
+        } else {
+          // 如果沒下注
+        }
       }
+    });
+    this.$bus.$on("btnCancel", function() {
+      _this.$store.dispatch("views/setTotalBet", 0);
+      _this.clearDesktopMonetAndChips();
     });
     this.$bus.$on("refreshBtnState", function() {
       _this.$set(
@@ -327,6 +366,7 @@ export default {
   },
   data() {
     return {
+      put_list: [],
       desk_chip_cover: false,
       ani: {
         scaleMove: false,
@@ -388,6 +428,14 @@ export default {
   methods: {
     putMoneyOnBoard(id) {
       this.formData[id].price += this.plateChip;
+
+      const _this = this;
+      let total = 0;
+      for (let key in _this.formData) {
+        total += _this.formData[key].price;
+      }
+      // _this.$store.dispatch("views/setTotalBet", total);
+      _this.$bus.$emit("updateTotalBet", total);
     },
     openBowl() {
       console.log("開晚");
@@ -416,87 +464,34 @@ export default {
       } else {
         _this.paperGroup.p3 = true;
       }
-
-      // function f(panel) {
-      //   const list = [_this.paper.p1, _this.paper.p2, _this.paper.p3, _this.paper.p4];
-      //
-      //   for (let i = 0; i < list.length; i++) {
-      //     openCodeList[i] === "1"
-      //       ? list[i].classList.add("red-paper")
-      //       : list[i].classList.add("white-paper");
-      //   }
-      //
-      //   const num = panel.querySelectorAll(".red-paper").length;
-      //
-      //   setTimeout(function() {
-      //     if (num % 2 === 0) {
-      //       $(".even-font").addClass("font-active");
-      //       $("#sedia_even").addClass("box-highlight");
-      //     } else {
-      //       $(".odd-font").addClass("font-active");
-      //       $("#sedia_odd").addClass("box-highlight");
-      //     }
-      //
-      //     if (num === 0) {
-      //       $("#sedia_fourth_w").addClass("box-highlight");
-      //     } else if (num === 1) {
-      //       $("#sedia_third_w").addClass("box-highlight");
-      //     } else if (num === 3) {
-      //       $("#sedia_third_r").addClass("box-highlight");
-      //     } else if (num === 4) {
-      //       $("#sedia_fourth_r").addClass("box-highlight");
-      //     }
-      //   }, 4000);
-      //
-      //   setTimeout(function() {
-      //     $(".font-active").removeClass("font-active");
-      //     setTimeout(function() {
-      //       let info = {
-      //         expect: startingCurrFullExpect - 1,
-      //         lotteryname: "mysedia"
-      //       };
-      //       const response = api("betsResult", info);
-      //
-      //       response.done(e => {
-      //         //TODO
-      //
-      //         api("checkislogin", {}).done(function(res) {
-      //           const data = JSON.parse(res);
-      //           if (data.sign !== true) {
-      //             showErrorMessage(data.message);
-      //           }
-      //           nowMoney = data.data.balance;
-      //           countUp.update(nowMoney);
-      //         });
-      //
-      //         shouldShowMoney = true;
-      //
-      //         let reg = /,+-$/gi;
-      //         const d = JSON.parse(e);
-      //         const n = d.data.amount.toString().replace(reg, "");
-      //         if (parseInt(n) !== 0) {
-      //           $(".betsResult").addClass("open");
-      //           if (parseInt(n) > 0) {
-      //             $(".betsValue").css("color", "green");
-      //           } else {
-      //             $(".betsValue").css("color", "red");
-      //           }
-      //           $(".betsValue")[0].innerHTML = d.data.amount;
-      //           winMoneyValue = d.data.amount > 0 ? d.data.amount : 0;
-      //           winMoney.update(winMoneyValue);
-      //         }
-      //       });
-      //     }, 100);
-      //   }, 6000);
-      //   setTimeout(function() {
-      //     $(".box-highlight").removeClass("box-highlight");
-      //   }, 9000);
-      // }
     },
     clearDesktopMonetAndChips() {
       const _this = this;
       for (let key in _this.formData) {
         _this.formData[key].price = 0;
+      }
+    },
+    startToNewGame() {
+      // 應檢查是否已下過注
+      const _this = this;
+
+      if (_this.put_list.length > 0) {
+        console.log("開始新局前：", _this.put_list);
+        _this.$store.dispatch("views/setLastPutList", _this.put_list);
+        _this.put_list = [];
+        console.log("開始新局後：", _this.put_list);
+      }
+
+      const lastPutList = _this.desktopView[_this.currIndex].last_put_list;
+
+      if (lastPutList.length > 0) {
+        _this.$store.dispatch("views/setBtnAgain", true);
+      }
+
+      _this.$store.dispatch("views/setBtnCancel", true);
+
+      if (_this.balance < 100) {
+        _this.$store.dispatch("views/setBtnAgree", true);
       }
     }
   }
@@ -896,7 +891,6 @@ $main-color: #34185d;
 
 .scale-move-out {
   animation: scalePanelBackAni ease-out 0.8s;
-  animation-delay: 0.2s;
   animation-iteration-count: 1;
   transform-origin: 50%;
   animation-fill-mode: forwards;

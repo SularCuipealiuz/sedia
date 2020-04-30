@@ -54,7 +54,8 @@ const mutations = {
       btn_again: obj.btn_again,
       btn_cancel: obj.btn_cancel,
       btn_agree: obj.btn_agree,
-      chips_plate: obj.chips_plate
+      chips_plate: obj.chips_plate,
+      last_put_list: obj.last_put_list
     });
   },
   SET_HINT_TYPE: (state, type) => {
@@ -101,9 +102,9 @@ const mutations = {
   },
   SET_ON_READY: (state, boolean) => {
     state.noticeState.onReady = boolean;
-    state.desktop_view[state.curr_index - 1].btn_again = false;
-    state.desktop_view[state.curr_index - 1].btn_cancel = false;
-    state.desktop_view[state.curr_index - 1].btn_agree = false;
+  },
+  SET_TOTAL_BET: (state, num) => {
+    state.desktop_view[state.curr_index - 1].total_bet = num;
   },
   SET_BTN_AGAIN: (state, boolean) => {
     state.desktop_view[state.curr_index - 1].btn_again = boolean;
@@ -134,6 +135,9 @@ const mutations = {
   },
   SET_CHIPS_PLATE: (state, boolean) => {
     state.desktop_view[state.curr_index - 1].chips_plate = boolean;
+  },
+  SET_LAST_PUT_LIST: (state, array) => {
+    state.desktop_view[state.curr_index - 1].last_put_list = array;
   }
 };
 
@@ -144,6 +148,7 @@ const actions = {
   },
   openDesktopView: ({ commit }, obj) => {
     // 重置頁面、開啟玩家UI、設定桌號
+
     let notExist = false;
     commit("RESET_DESKTOP_VIEW");
     commit("SET_FLOAT_UI_STATE", true);
@@ -189,7 +194,8 @@ const actions = {
         btn_again: true,
         btn_cancel: true,
         btn_agree: true,
-        chips_plate: true
+        chips_plate: true,
+        last_put_list: []
       });
     }
 
@@ -199,6 +205,7 @@ const actions = {
     commit("SET_FLOAT_UI_STATE", boolean);
   },
   closeDesktopView: ({ commit }) => {
+    // 關閉房間回到大廳時應清空狀態
     commit("RESET_DESKTOP_VIEW");
     commit("SET_FLOAT_UI_STATE", false);
     commit("SET_HISTORY_TAB_STATE", false);
@@ -262,6 +269,21 @@ const actions = {
   },
   setCurrFullExpect: ({ commit }, num) => {
     commit("SET_CURR_FULL_EXPECT", num);
+  },
+  setTotalBet: ({ commit }, num) => {
+    commit("SET_TOTAL_BET", num);
+  },
+  setLastPutList: ({ commit }, array) => {
+    commit("SET_LAST_PUT_LIST", array);
+  },
+  setBtnAgree: ({ commit }, boolean) => {
+    commit("SET_BTN_AGREE", boolean);
+  },
+  setBtnCancel: ({ commit }, boolean) => {
+    commit("SET_BTN_CANCEL", boolean);
+  },
+  setBtnAgain: ({ commit }, boolean) => {
+    commit("SET_BTN_AGAIN", boolean);
   }
 };
 

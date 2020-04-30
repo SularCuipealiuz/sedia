@@ -149,6 +149,9 @@ export default {
         //TODO 開啟UI、呼叫入桌API
         console.log("本桌资讯：", e);
         _this.$bus.$emit("refreshBtnState");
+
+        const total = _this.desktopView[_this.currIndex - 1].total_bet;
+        _this.$bus.$emit("updateTotalBet", total);
       });
     },
     returnPaperColor(str) {
