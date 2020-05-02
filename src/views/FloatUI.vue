@@ -115,14 +115,14 @@
       <div class="footer-bar footer-bar-right flex row">
         <div
           class="float-btn flex column"
-          :class="{ 'disable-button': !btn_again }"
+          :class="{ 'disable-button': btn_again === false }"
         >
           <span>延續上把</span>
           <img src="../assets/table/refresh-24px.svg" alt="" />
         </div>
         <div
           class="float-btn flex column"
-          :class="{ 'disable-button': !btn_cancel }"
+          :class="{ 'disable-button': btn_cancel === false }"
           @click="btnCancel"
         >
           <span>取消押注</span>
@@ -130,7 +130,7 @@
         </div>
         <div
           class="float-btn flex column"
-          :class="{ 'disable-button': !btn_agree }"
+          :class="{ 'disable-button': btn_agree === false }"
           @click="btnAgree"
         >
           <span>確認押注</span>
@@ -280,27 +280,29 @@ export default {
   mounted() {
     const _this = this;
     this.$bus.$on("refreshBtnState", function() {
-      console.log("進");
-      _this.$set(
-        _this,
-        "btn_again",
-        _this.desktopView[_this.currIndex - 1].btn_again
-      );
-      _this.$set(
-        _this,
-        "btn_cancel",
-        _this.desktopView[_this.currIndex - 1].btn_cancel
-      );
-      _this.$set(
-        _this,
-        "btn_agree",
-        _this.desktopView[_this.currIndex - 1].btn_agree
-      );
-      _this.$set(
-        _this,
-        "chips_plate",
-        _this.desktopView[_this.currIndex - 1].chips_plate
-      );
+      console.log("進，綁定按鈕狀態");
+      _this.$nextTick(function() {
+        _this.$set(
+          _this,
+          "btn_again",
+          _this.desktopView[_this.currIndex - 1].btn_again
+        );
+        _this.$set(
+          _this,
+          "btn_cancel",
+          _this.desktopView[_this.currIndex - 1].btn_cancel
+        );
+        _this.$set(
+          _this,
+          "btn_agree",
+          _this.desktopView[_this.currIndex - 1].btn_agree
+        );
+        _this.$set(
+          _this,
+          "chips_plate",
+          _this.desktopView[_this.currIndex - 1].chips_plate
+        );
+      });
     });
     this.$bus.$on("updateTotalBet", function(totalBetValue) {
       _this.total_bet = totalBetValue;
@@ -333,14 +335,14 @@ export default {
       //TODO 问题，没有实际绑定到原始对象（find过程中已经另产新对象）
     },
     goToHall() {
-      const _this = this
+      const _this = this;
       this.$store.dispatch("views/disableAllNoticeState").then(() => {
         console.log("closeNotice");
       });
 
       this.$store.dispatch("views/closeDesktopView").then(() => {
         console.log("close room");
-        _this.total_bet = 0
+        _this.total_bet = 0;
       });
     },
     getDesktopInfo(list) {

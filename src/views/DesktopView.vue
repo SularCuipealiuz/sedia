@@ -14,7 +14,38 @@
             <br />
             1:{{ desktop.sedia_even.maxrate }}
 
-            <div class="put-chips-panel"></div>
+            <div class="put-chips-panel">
+              <div
+                v-if="formData.sedia_even.bets['10000'] > 0"
+                class="table-chips for-10000"
+              >
+                <img src="../assets/chips/10000.png" alt="" />
+              </div>
+              <div
+                v-if="formData.sedia_even.bets['5000'] > 0"
+                class="table-chips for-5000"
+              >
+                <img src="../assets/chips/5000.png" alt="" />
+              </div>
+              <div
+                v-if="formData.sedia_even.bets['1000'] > 0"
+                class="table-chips for-1000"
+              >
+                <img src="../assets/chips/1000.png" alt="" />
+              </div>
+              <div
+                v-if="formData.sedia_even.bets['500'] > 0"
+                class="table-chips for-500"
+              >
+                <img src="../assets/chips/500.png" alt="" />
+              </div>
+              <div
+                v-if="formData.sedia_even.bets['100'] > 0"
+                class="table-chips for-100"
+              >
+                <img src="../assets/chips/100.png" alt="" />
+              </div>
+            </div>
             <div class="put-money-panel" v-show="formData.sedia_even.price > 0">
               <span class="put-value">{{ formData.sedia_even.price }}</span>
             </div>
@@ -26,7 +57,38 @@
           >
             1:{{ desktop.sedia_fourth_r.maxrate }}
 
-            <div class="put-chips-panel"></div>
+            <div class="put-chips-panel">
+              <div
+                v-if="formData.sedia_fourth_r.bets['10000'] > 0"
+                class="table-chips for-10000"
+              >
+                <img src="../assets/chips/10000.png" alt="" />
+              </div>
+              <div
+                v-if="formData.sedia_fourth_r.bets['5000'] > 0"
+                class="table-chips for-5000"
+              >
+                <img src="../assets/chips/5000.png" alt="" />
+              </div>
+              <div
+                v-if="formData.sedia_fourth_r.bets['1000'] > 0"
+                class="table-chips for-1000"
+              >
+                <img src="../assets/chips/1000.png" alt="" />
+              </div>
+              <div
+                v-if="formData.sedia_fourth_r.bets['500'] > 0"
+                class="table-chips for-500"
+              >
+                <img src="../assets/chips/500.png" alt="" />
+              </div>
+              <div
+                v-if="formData.sedia_fourth_r.bets['100'] > 0"
+                class="table-chips for-100"
+              >
+                <img src="../assets/chips/100.png" alt="" />
+              </div>
+            </div>
             <div
               class="put-money-panel"
               v-show="formData.sedia_fourth_r.price > 0"
@@ -39,7 +101,38 @@
             @click="putMoneyOnBoard('sedia_third_r')"
           >
             1:{{ desktop.sedia_third_r.maxrate }}
-            <div class="put-chips-panel"></div>
+            <div class="put-chips-panel">
+              <div
+                v-if="formData.sedia_third_r.bets['10000'] > 0"
+                class="table-chips for-10000"
+              >
+                <img src="../assets/chips/10000.png" alt="" />
+              </div>
+              <div
+                v-if="formData.sedia_third_r.bets['5000'] > 0"
+                class="table-chips for-5000"
+              >
+                <img src="../assets/chips/5000.png" alt="" />
+              </div>
+              <div
+                v-if="formData.sedia_third_r.bets['1000'] > 0"
+                class="table-chips for-1000"
+              >
+                <img src="../assets/chips/1000.png" alt="" />
+              </div>
+              <div
+                v-if="formData.sedia_third_r.bets['500'] > 0"
+                class="table-chips for-500"
+              >
+                <img src="../assets/chips/500.png" alt="" />
+              </div>
+              <div
+                v-if="formData.sedia_third_r.bets['100'] > 0"
+                class="table-chips for-100"
+              >
+                <img src="../assets/chips/100.png" alt="" />
+              </div>
+            </div>
             <div
               class="put-money-panel"
               v-show="formData.sedia_third_r.price > 0"
@@ -57,7 +150,38 @@
             {{ desktop.sedia_odd.title }}
             <br />
             1:{{ desktop.sedia_odd.maxrate }}
-            <div class="put-chips-panel"></div>
+            <div class="put-chips-panel">
+              <div
+                v-if="formData.sedia_odd.bets['10000'] > 0"
+                class="table-chips for-10000"
+              >
+                <img src="../assets/chips/10000.png" alt="" />
+              </div>
+              <div
+                v-if="formData.sedia_odd.bets['5000'] > 0"
+                class="table-chips for-5000"
+              >
+                <img src="../assets/chips/5000.png" alt="" />
+              </div>
+              <div
+                v-if="formData.sedia_odd.bets['1000'] > 0"
+                class="table-chips for-1000"
+              >
+                <img src="../assets/chips/1000.png" alt="" />
+              </div>
+              <div
+                v-if="formData.sedia_odd.bets['500'] > 0"
+                class="table-chips for-500"
+              >
+                <img src="../assets/chips/500.png" alt="" />
+              </div>
+              <div
+                v-if="formData.sedia_odd.bets['100'] > 0"
+                class="table-chips for-100"
+              >
+                <img src="../assets/chips/100.png" alt="" />
+              </div>
+            </div>
             <div class="put-money-panel" v-show="formData.sedia_odd.price > 0">
               <span class="put-value">{{ formData.sedia_odd.price }}</span>
             </div>
@@ -67,7 +191,38 @@
             @click="putMoneyOnBoard('sedia_third_w')"
           >
             1:{{ desktop.sedia_third_w.maxrate }}
-            <div class="put-chips-panel"></div>
+            <div class="put-chips-panel">
+              <div
+                v-if="formData.sedia_third_w.bets['10000'] > 0"
+                class="table-chips for-10000"
+              >
+                <img src="../assets/chips/10000.png" alt="" />
+              </div>
+              <div
+                v-if="formData.sedia_third_w.bets['5000'] > 0"
+                class="table-chips for-5000"
+              >
+                <img src="../assets/chips/5000.png" alt="" />
+              </div>
+              <div
+                v-if="formData.sedia_third_w.bets['1000'] > 0"
+                class="table-chips for-1000"
+              >
+                <img src="../assets/chips/1000.png" alt="" />
+              </div>
+              <div
+                v-if="formData.sedia_third_w.bets['500'] > 0"
+                class="table-chips for-500"
+              >
+                <img src="../assets/chips/500.png" alt="" />
+              </div>
+              <div
+                v-if="formData.sedia_third_w.bets['100'] > 0"
+                class="table-chips for-100"
+              >
+                <img src="../assets/chips/100.png" alt="" />
+              </div>
+            </div>
             <div
               class="put-money-panel"
               v-show="formData.sedia_third_w.price > 0"
@@ -80,7 +235,38 @@
             @click="putMoneyOnBoard('sedia_fourth_w')"
           >
             1:{{ desktop.sedia_fourth_w.maxrate }}
-            <div class="put-chips-panel"></div>
+            <div class="put-chips-panel">
+              <div
+                v-if="formData.sedia_fourth_w.bets['10000'] > 0"
+                class="table-chips for-10000"
+              >
+                <img src="../assets/chips/10000.png" alt="" />
+              </div>
+              <div
+                v-if="formData.sedia_fourth_w.bets['5000'] > 0"
+                class="table-chips for-5000"
+              >
+                <img src="../assets/chips/5000.png" alt="" />
+              </div>
+              <div
+                v-if="formData.sedia_fourth_w.bets['1000'] > 0"
+                class="table-chips for-1000"
+              >
+                <img src="../assets/chips/1000.png" alt="" />
+              </div>
+              <div
+                v-if="formData.sedia_fourth_w.bets['500'] > 0"
+                class="table-chips for-500"
+              >
+                <img src="../assets/chips/500.png" alt="" />
+              </div>
+              <div
+                v-if="formData.sedia_fourth_w.bets['100'] > 0"
+                class="table-chips for-100"
+              >
+                <img src="../assets/chips/100.png" alt="" />
+              </div>
+            </div>
             <div
               class="put-money-panel"
               v-show="formData.sedia_fourth_w.price > 0"
@@ -261,6 +447,7 @@ export default {
     deskInfo: Object
   },
   mounted() {
+    console.log(this.formData.sedia_even.bets["10000"]);
     const _this = this;
 
     function openCode() {
@@ -327,9 +514,7 @@ export default {
           }, 1000);
 
           _this.$store.dispatch("views/disableAllNoticeState").then(() => {
-            console.log("closeNotice");
-            _this.$store.dispatch("views/openOnReady").then(e => {
-              console.log("openOnReady", e);
+            _this.$store.dispatch("views/openOnReady").then(() => {
               _this.$bus.$emit("refreshBtnState");
             });
           });
@@ -353,11 +538,13 @@ export default {
       _this.clearDesktopMonetAndChips();
     });
     this.$bus.$on("refreshBtnState", function() {
-      _this.$set(
-        _this,
-        "desk_chip_cover",
-        _this.desktopView[_this.currIndex - 1].chips_plate
-      );
+      _this.$nextTick(function() {
+        _this.$set(
+          _this,
+          "desk_chip_cover",
+          _this.desktopView[_this.currIndex - 1].chips_plate
+        );
+      });
     });
     const index = this.currIndex - 1;
     this.$set(this.state, "btnAgain", this.desktopView[index].btn_again);
@@ -384,27 +571,69 @@ export default {
       formData: {
         sedia_even: {
           playid: "sedia_even",
-          price: 0
+          price: 0,
+          bets: {
+            10000: 0,
+            5000: 0,
+            1000: 0,
+            500: 0,
+            100: 0
+          }
         },
         sedia_odd: {
           playid: "sedia_odd",
-          price: 0
+          price: 0,
+          bets: {
+            10000: 0,
+            5000: 0,
+            1000: 0,
+            500: 0,
+            100: 0
+          }
         },
         sedia_fourth_r: {
           playid: "sedia_fourth_r",
-          price: 0
+          price: 0,
+          bets: {
+            10000: 0,
+            5000: 0,
+            1000: 0,
+            500: 0,
+            100: 0
+          }
         },
         sedia_third_r: {
           playid: "sedia_third_r",
-          price: 0
+          price: 0,
+          bets: {
+            10000: 0,
+            5000: 0,
+            1000: 0,
+            500: 0,
+            100: 0
+          }
         },
         sedia_third_w: {
           playid: "sedia_third_w",
-          price: 0
+          price: 0,
+          bets: {
+            10000: 0,
+            5000: 0,
+            1000: 0,
+            500: 0,
+            100: 0
+          }
         },
         sedia_fourth_w: {
           playid: "sedia_fourth_w",
-          price: 0
+          price: 0,
+          bets: {
+            10000: 0,
+            5000: 0,
+            1000: 0,
+            500: 0,
+            100: 0
+          }
         }
       },
       state: {
@@ -427,15 +656,27 @@ export default {
   },
   methods: {
     putMoneyOnBoard(id) {
-      this.formData[id].price += this.plateChip;
+      const even = this.formData["sedia_even"].price;
+      const odd = this.formData["sedia_odd"].price;
 
-      const _this = this;
-      let total = 0;
-      for (let key in _this.formData) {
-        total += _this.formData[key].price;
+      if (
+        (id === "sedia_even" && odd !== 0) ||
+        (id === "sedia_odd" && even !== 0)
+      ) {
+        console.log("不能同時下單雙注");
+        return;
+      } else {
+        this.formData[id].price += this.plateChip;
+
+        const _this = this;
+        let total = 0;
+        for (let key in _this.formData) {
+          total += _this.formData[key].price;
+        }
+
+        _this.formData[id].bets[_this.plateChip] += 1;
+        _this.$bus.$emit("updateTotalBet", total);
       }
-      // _this.$store.dispatch("views/setTotalBet", total);
-      _this.$bus.$emit("updateTotalBet", total);
     },
     openBowl() {
       console.log("開晚");
@@ -482,16 +723,18 @@ export default {
         console.log("開始新局後：", _this.put_list);
       }
 
-      const lastPutList = _this.desktopView[_this.currIndex].last_put_list;
+      const lastPutList = _this.desktopView[_this.currIndex - 1].last_put_list;
 
+      console.log("lastPutList", lastPutList);
       if (lastPutList.length > 0) {
         _this.$store.dispatch("views/setBtnAgain", true);
       }
 
       _this.$store.dispatch("views/setBtnCancel", true);
 
-      if (_this.balance < 100) {
+      if (_this.balance > 100) {
         _this.$store.dispatch("views/setBtnAgree", true);
+        _this.$store.dispatch("views/setChipsPlate", true);
       }
     }
   }
@@ -606,6 +849,24 @@ $main-color: #34185d;
           height: 30px;
           pointer-events: none;
           width: 100px;
+
+          > .table-chips {
+            width: 30px;
+            margin: -4px;
+            height: 100%;
+            position: relative;
+            top: 0;
+            left: 0;
+            transition-duration: 1s;
+
+            img {
+              position: absolute;
+              top: 0;
+              left: 0;
+              height: 100%;
+              width: auto;
+            }
+          }
         }
       }
     }

@@ -164,17 +164,17 @@ export default {
           "views/setStopWatchTimer",
           parseInt(_this.stopWatchTime) - 1
         );
-        if (_this.stopWatchTime === 0) {
+
+        const inDesktop = _this.desktopView.some(e => e.visible === true);
+
+        if (_this.stopWatchTime === 0 && inDesktop === true) {
           _this.stopTimer().then(() => {
             console.log("over");
 
             setTimeout(function() {
               _this.$store.dispatch("views/disableAllNoticeState").then(() => {
-                console.log("closeNotice");
                 _this.$store.dispatch("views/openIsOpening").then(() => {
-                  console.log("openIsOpening");
                   _this.$bus.$emit("refreshBtnState");
-
                   setTimeout(function() {
                     _this.$bus.$emit("scaleMove");
                   }, 1000);

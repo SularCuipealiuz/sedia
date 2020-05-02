@@ -284,6 +284,9 @@ const actions = {
   },
   setBtnAgain: ({ commit }, boolean) => {
     commit("SET_BTN_AGAIN", boolean);
+  },
+  setChipsPlate: ({ commit }, boolean) => {
+    commit("SET_CHIPS_PLATE", boolean);
   }
 };
 

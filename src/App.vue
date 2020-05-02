@@ -9,6 +9,7 @@ body {
   margin: 0;
   font-family: "Open Sans", "Helvetica Neue", Arial, "Hiragino Sans GB",
     "Microsoft YaHei", "WenQuanYi Micro Hei", sans-serif;
+  background-color: black;
 }
 </style>
 
