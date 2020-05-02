@@ -191,10 +191,10 @@ const actions = {
         player_count: 0,
         auto_play: false,
         history_panel: false,
-        btn_again: true,
-        btn_cancel: true,
-        btn_agree: true,
-        chips_plate: true,
+        btn_again: false,
+        btn_cancel: false,
+        btn_agree: false,
+        chips_plate: false,
         last_put_list: []
       });
     }

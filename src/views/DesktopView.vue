@@ -550,6 +550,8 @@ export default {
     this.$set(this.state, "btnAgain", this.desktopView[index].btn_again);
     this.$set(this.state, "btnCancel", this.desktopView[index].btn_cancel);
     this.$set(this.state, "btnAgree", this.desktopView[index].btn_agree);
+
+    _this.startToNewGame();
   },
   data() {
     return {
@@ -717,22 +719,17 @@ export default {
       const _this = this;
 
       if (_this.put_list.length > 0) {
-        console.log("開始新局前：", _this.put_list);
         _this.$store.dispatch("views/setLastPutList", _this.put_list);
         _this.put_list = [];
-        console.log("開始新局後：", _this.put_list);
       }
 
       const lastPutList = _this.desktopView[_this.currIndex - 1].last_put_list;
 
-      console.log("lastPutList", lastPutList);
-      if (lastPutList.length > 0) {
-        _this.$store.dispatch("views/setBtnAgain", true);
-      }
-
-      _this.$store.dispatch("views/setBtnCancel", true);
-
       if (_this.balance > 100) {
+        if (lastPutList.length > 0) {
+          _this.$store.dispatch("views/setBtnAgain", true);
+        }
+        _this.$store.dispatch("views/setBtnCancel", true);
         _this.$store.dispatch("views/setBtnAgree", true);
         _this.$store.dispatch("views/setChipsPlate", true);
       }
