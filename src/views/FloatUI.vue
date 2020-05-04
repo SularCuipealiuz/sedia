@@ -27,10 +27,10 @@
     </div>
     <div class="ui-body flex row">
       <div class="ui-left flex column">
-        <div class="float-btn flex center" @click="go2LogPage">
+        <div class="float-btn flex center btn-log" @click="go2LogPage">
           <img src="../assets/table/reader.svg" alt="" />
         </div>
-        <div class="float-btn flex center" @click="goToHall">
+        <div class="float-btn flex center btn-hall" @click="goToHall">
           <img
             src="../assets/table/exit.svg"
             style="transform: rotateY(-180deg)"
@@ -382,6 +382,12 @@ $highlight: #ffc51a;
   background-color: transparent;
   flex-direction: column;
   pointer-events: none;
+
+  padding-top: env(safe-area-inset-top);
+  padding-right: env(safe-area-inset-right);
+  padding-left: env(safe-area-inset-left);
+
+  box-sizing: border-box;
 }
 
 .highlight {
@@ -465,6 +471,10 @@ $highlight: #ffc51a;
       background-color: rgba(0, 0, 0, 0.3);
       border-top-right-radius: 15px;
       border-bottom-right-radius: 15px;
+
+      @media only screen and (min-device-width: 375px) and (max-device-width: 812px) {
+        left: -45px;
+      }
 
       .cash {
         position: absolute;
@@ -642,12 +652,27 @@ $highlight: #ffc51a;
     justify-content: flex-end;
     align-items: flex-start;
 
+    > .btn-log {
+      left: 0;
+      bottom: 43%;
+    }
+
+    > .btn-hall {
+      left: 0;
+      bottom: 28%;
+    }
+
     > .float-btn {
       border-top-right-radius: 7px;
       border-bottom-right-radius: 7px;
-      margin-bottom: 15px;
       height: 42px;
       width: 50px;
+
+      @media only screen and (min-device-width: 375px) and (max-device-width: 812px) {
+        padding-left: 35px;
+        position: absolute;
+        left: 0;
+      }
 
       img {
         width: 30px;
@@ -673,8 +698,19 @@ $highlight: #ffc51a;
       top: 30%;
       transition: right 0.35s linear 0s;
 
+      @media only screen and (min-device-width: 375px) and (max-device-width: 812px) {
+        padding-right: 30px;
+      }
+
       &.open-history-tab {
         right: 130px;
+
+        @media only screen and (min-device-width: 375px) and (max-device-width: 812px) {
+          padding-right: 0px;
+        }
+        @media only screen and (min-device-width: 375px) and (max-device-width: 812px) {
+          right: 160px;
+        }
       }
     }
   }
@@ -991,6 +1027,9 @@ $highlight: #ffc51a;
 
   &.open-history-tab {
     right: 0;
+    @media only screen and (min-device-width: 375px) and (max-device-width: 812px) {
+      right: 30px;
+    }
   }
 
   > .history-row {

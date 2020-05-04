@@ -80,9 +80,7 @@ export default {
         isOpening: require("../assets/section/open.png"),
         pleasePutChip: require("../assets/section/please.png"),
         pleaseWaitNext: require("../assets/section/wait.png"),
-        notReady: require("../assets/section/working.png"),
-        even: require("../assets/section/even.png"),
-        odd: require("../assets/section/odd.png")
+        notReady: require("../assets/section/working.png")
       }
     };
   },
