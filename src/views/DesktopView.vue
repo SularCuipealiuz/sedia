@@ -646,9 +646,16 @@ export default {
                 _this.$store
                   .dispatch("views/disableAllNoticeState")
                   .then(() => {
-                    _this.$store.dispatch("views/openEvenNotice").then(() => {
-                      console.log("show");
-                    });
+                    const b = _this.isEvenOdd(e.data.opencode);
+                    if (b === 0) {
+                      _this.$store.dispatch("views/openEvenNotice").then(() => {
+                        console.log("show");
+                      });
+                    } else {
+                      _this.$store.dispatch("views/openOddNotice").then(() => {
+                        console.log("show");
+                      });
+                    }
                   });
               }, 2000);
 
@@ -937,6 +944,11 @@ export default {
         _this.$store.dispatch("views/setBtnAgreeForAll", true);
         _this.$store.dispatch("views/setChipsPlateForAll", true);
       }
+    },
+    isEvenOdd(str) {
+      let s = str.toString().split(",");
+      let b = s.filter(e => e === "1");
+      return b.length % 2;
     }
   }
 };
