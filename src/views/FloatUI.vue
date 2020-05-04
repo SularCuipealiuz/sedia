@@ -116,6 +116,7 @@
         <div
           class="float-btn flex column"
           :class="{ 'disable-button': btn_again === false }"
+          @click="btnAgain"
         >
           <span>延續上把</span>
           <img src="../assets/table/refresh-24px.svg" alt="" />

@@ -419,12 +419,7 @@ export default {
       "currFullExpect",
       "lotteryName",
       "desktopView",
-      "plzChose",
-      "onReady",
-      "isOpening",
       "pleasePutChip",
-      "pleaseWaitNext",
-      "notReady",
       "balance"
     ])
   },
@@ -466,6 +461,17 @@ export default {
 
             setTimeout(function() {
               _this.openBowl();
+              //TODO 顯示下注結果
+              setTimeout(function() {
+                _this.$store
+                  .dispatch("views/disableAllNoticeState")
+                  .then(() => {
+                    _this.$store.dispatch("views/openEvenNotice").then(() => {
+                      console.log("show");
+                    });
+                  });
+              }, 2000);
+
               setTimeout(function() {
                 _this.ani.scaleMoveOut = true;
 
@@ -523,10 +529,9 @@ export default {
             orderList: list,
             expect: _this.currFullExpect,
             lotteryname: _this.lotteryName
-          }).then(e => {
-            // 當投注成功後，應顯示onReady狀態、鎖住桌面投注、鎖住選籌碼、鎖住三個按鈕、
-            console.log(e);
-            _this.put_list = list;
+          }).then(() => {
+            // 當投注成功後，應顯示onReady狀態、鎖住桌面投注、鎖住選籌碼、鎖住三個按鈕
+            _this.put_list = JSON.parse(JSON.stringify(_this.formData));
           });
         } else {
           // 如果沒下注
@@ -536,6 +541,11 @@ export default {
     this.$bus.$on("btnCancel", function() {
       _this.$store.dispatch("views/setTotalBet", 0);
       _this.clearDesktopMonetAndChips();
+    });
+    this.$bus.$on("btnAgain", function() {
+      const _this = this;
+      const lastPutList = _this.desktopView[_this.currIndex - 1].last_put_list;
+      console.log("響應", lastPutList);
     });
     this.$bus.$on("refreshBtnState", function() {
       _this.$nextTick(function() {
@@ -555,7 +565,7 @@ export default {
   },
   data() {
     return {
-      put_list: [],
+      put_list: {},
       desk_chip_cover: false,
       ani: {
         scaleMove: false,
@@ -712,26 +722,40 @@ export default {
       const _this = this;
       for (let key in _this.formData) {
         _this.formData[key].price = 0;
+        for (let key2 in _this.formData[key].bets) {
+          _this.formData[key].bets[key2] = 0;
+        }
       }
     },
     startToNewGame() {
       // 應檢查是否已下過注
+      // 以下功能應針對"全桌"
+      console.log("開新局");
       const _this = this;
 
-      if (_this.put_list.length > 0) {
-        _this.$store.dispatch("views/setLastPutList", _this.put_list);
-        _this.put_list = [];
+      if (Object.keys(_this.put_list).length > 0) {
+        _this.$store
+          .dispatch("views/setLastPutListForAll", _this.put_list)
+          .then(() => {
+            _this.put_list = {};
+            const lastPutList = JSON.parse(
+              JSON.stringify(
+                _this.desktopView[_this.currIndex - 1].last_put_list
+              )
+            );
+            if (_this.balance > 100) {
+              if (Object.keys(lastPutList).length > 0) {
+                console.log("有進對吧");
+                _this.$store.dispatch("views/setBtnAgainForAll", true);
+              }
+            }
+          });
       }
 
-      const lastPutList = _this.desktopView[_this.currIndex - 1].last_put_list;
-
       if (_this.balance > 100) {
-        if (lastPutList.length > 0) {
-          _this.$store.dispatch("views/setBtnAgain", true);
-        }
-        _this.$store.dispatch("views/setBtnCancel", true);
-        _this.$store.dispatch("views/setBtnAgree", true);
-        _this.$store.dispatch("views/setChipsPlate", true);
+        _this.$store.dispatch("views/setBtnCancelForAll", true);
+        _this.$store.dispatch("views/setBtnAgreeForAll", true);
+        _this.$store.dispatch("views/setChipsPlateForAll", true);
       }
     }
   }

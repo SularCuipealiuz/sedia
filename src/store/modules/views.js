@@ -23,7 +23,9 @@ const state = {
     isOpening: false,
     pleasePutChip: false,
     pleaseWaitNext: false,
-    notReady: false
+    notReady: false,
+    even: false,
+    odd: false
   },
   plateChip: 0,
   curr_full_expect: ""
@@ -115,6 +117,12 @@ const mutations = {
   SET_BTN_AGREE: (state, boolean) => {
     state.desktop_view[state.curr_index - 1].btn_agree = boolean;
   },
+  SET_EVEN_NOTICE: (state, boolean) => {
+    state.noticeState.even = boolean;
+  },
+  SET_ODD_NOTICE: (state, boolean) => {
+    state.noticeState.odd = boolean;
+  },
   SET_IS_OPENING: (state, boolean) => {
     state.noticeState.isOpening = boolean;
   },
@@ -138,6 +146,31 @@ const mutations = {
   },
   SET_LAST_PUT_LIST: (state, array) => {
     state.desktop_view[state.curr_index - 1].last_put_list = array;
+  },
+  SET_BTN_AGAIN_FOR_ALL: (state, boolean) => {
+    for (let key in state.desktop_view) {
+      state.desktop_view[key].btn_again = boolean;
+    }
+  },
+  SET_BTN_CANCEL_FOR_ALL: (state, boolean) => {
+    for (let key in state.desktop_view) {
+      state.desktop_view[key].btn_cancel = boolean;
+    }
+  },
+  SET_BTN_AGREE_FOR_ALL: (state, boolean) => {
+    for (let key in state.desktop_view) {
+      state.desktop_view[key].btn_agree = boolean;
+    }
+  },
+  SET_CHIPS_PLATE_FOR_ALL: (state, boolean) => {
+    for (let key in state.desktop_view) {
+      state.desktop_view[key].chips_plate = boolean;
+    }
+  },
+  SET_LAST_PUT_LIST_FOR_ALL: (state, array) => {
+    for (let key in state.desktop_view) {
+      state.desktop_view[key].last_put_list = array;
+    }
   }
 };
 
@@ -195,7 +228,7 @@ const actions = {
         btn_cancel: false,
         btn_agree: false,
         chips_plate: false,
-        last_put_list: []
+        last_put_list: {}
       });
     }
 
@@ -237,6 +270,8 @@ const actions = {
     commit("SET_PLEASE_PUT_CHIP", false);
     commit("SET_PLEASE_WAIT_NEXT", false);
     commit("SET_NOT_READY", false);
+    commit("SET_EVEN_NOTICE", false);
+    commit("SET_ODD_NOTICE", false);
   },
   openPlzChose: ({ commit }) => {
     commit("SET_PLZ_CHOSE", true);
@@ -257,6 +292,12 @@ const actions = {
   },
   openPleasePutChip: ({ commit }) => {
     commit("SET_PLEASE_PUT_CHIP", true);
+  },
+  openEvenNotice: ({ commit }) => {
+    commit("SET_EVEN_NOTICE", true);
+  },
+  openOddNotice: ({ commit }) => {
+    commit("SET_ODD_NOTICE", true);
   },
   openPleaseWaitNext: ({ commit }) => {
     commit("SET_PLEASE_WAIT_NEXT", true);
@@ -287,6 +328,21 @@ const actions = {
   },
   setChipsPlate: ({ commit }, boolean) => {
     commit("SET_CHIPS_PLATE", boolean);
+  },
+  setLastPutListForAll: ({ commit }, array) => {
+    commit("SET_LAST_PUT_LIST_FOR_ALL", array);
+  },
+  setBtnAgreeForAll: ({ commit }, boolean) => {
+    commit("SET_BTN_AGREE_FOR_ALL", boolean);
+  },
+  setBtnCancelForAll: ({ commit }, boolean) => {
+    commit("SET_BTN_CANCEL_FOR_ALL", boolean);
+  },
+  setBtnAgainForAll: ({ commit }, boolean) => {
+    commit("SET_BTN_AGAIN_FOR_ALL", boolean);
+  },
+  setChipsPlateForAll: ({ commit }, boolean) => {
+    commit("SET_CHIPS_PLATE_FOR_ALL", boolean);
   }
 };
 

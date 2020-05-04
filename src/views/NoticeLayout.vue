@@ -36,6 +36,20 @@
       :src="noticeList.notReady"
       alt=""
     />
+    <div
+      class="results-notice"
+      :class="{ 'results-animation': even }"
+      v-show="even"
+    >
+      <span class="purple">雙</span>贏
+    </div>
+    <div
+      class="results-notice"
+      :class="{ 'results-animation': odd }"
+      v-show="odd"
+    >
+      <span class="yellow">單</span>贏
+    </div>
   </section>
 </template>
 
@@ -53,7 +67,9 @@ export default {
       "isOpening",
       "pleasePutChip",
       "pleaseWaitNext",
-      "notReady"
+      "notReady",
+      "even",
+      "odd"
     ])
   },
   data() {
@@ -64,7 +80,9 @@ export default {
         isOpening: require("../assets/section/open.png"),
         pleasePutChip: require("../assets/section/please.png"),
         pleaseWaitNext: require("../assets/section/wait.png"),
-        notReady: require("../assets/section/working.png")
+        notReady: require("../assets/section/working.png"),
+        even: require("../assets/section/even.png"),
+        odd: require("../assets/section/odd.png")
       }
     };
   },
@@ -81,6 +99,7 @@ $highlight: #ffc51a;
   height: 100%;
   position: fixed;
   pointer-events: none;
+  font-family: "Microsoft JhengHei";
 }
 
 .flex {
@@ -137,6 +156,51 @@ $highlight: #ffc51a;
   animation-iteration-count: 1;
   transform-origin: 50% 50%;
   animation-fill-mode: forwards; /*when the spec is finished*/
+}
+
+.results-animation {
+  animation: topFadeInAni ease 1s, fadeOutAni ease 1s;
+  animation-delay: 0s, 3s;
+  animation-iteration-count: 1;
+  transform-origin: 50% 50%;
+  animation-fill-mode: forwards; /*when the spec is finished*/
+}
+
+.results-notice {
+  font-size: 80px;
+  font-weight: 900;
+  -webkit-text-stroke: 2.5px black;
+  color: white;
+
+  > .purple {
+    color: #c48dff;
+  }
+
+  > .yellow {
+    color: #ffa133;
+  }
+}
+
+@keyframes topFadeInAni {
+  0% {
+    opacity: 0;
+    transform: translate(0px, -15px);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(0px, 0px);
+  }
+}
+
+@keyframes fadeOutAni {
+  0% {
+    opacity: 1;
+    transform: translate(0px, -0px);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(0px, 0px);
+  }
 }
 
 @keyframes leftFadeInAni {

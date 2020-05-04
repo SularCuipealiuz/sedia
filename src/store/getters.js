@@ -23,6 +23,8 @@ const getters = {
   pleasePutChip: state => state.views.noticeState.pleasePutChip,
   pleaseWaitNext: state => state.views.noticeState.pleaseWaitNext,
   notReady: state => state.views.noticeState.notReady,
+  even: state => state.views.noticeState.even,
+  odd: state => state.views.noticeState.odd,
   plateChip: state => state.views.plateChip,
   currFullExpect: state => state.views.curr_full_expect
 };
