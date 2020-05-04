@@ -19,31 +19,61 @@
                 v-if="formData.sedia_even.bets['10000'] > 0"
                 class="table-chips for-10000"
               >
-                <img src="../assets/chips/10000.png" alt="" />
+                <img
+                  v-for="(e, i) in formData.sedia_even.bets['10000']"
+                  :key="i"
+                  :style="{ top: '-' + i * 2 + 'px' }"
+                  src="../assets/chips/10000.png"
+                  alt=""
+                />
               </div>
               <div
                 v-if="formData.sedia_even.bets['5000'] > 0"
                 class="table-chips for-5000"
               >
-                <img src="../assets/chips/5000.png" alt="" />
+                <img
+                  v-for="(e, i) in formData.sedia_even.bets['5000']"
+                  :key="i"
+                  :style="{ top: '-' + i * 2 + 'px' }"
+                  src="../assets/chips/5000.png"
+                  alt=""
+                />
               </div>
               <div
                 v-if="formData.sedia_even.bets['1000'] > 0"
                 class="table-chips for-1000"
               >
-                <img src="../assets/chips/1000.png" alt="" />
+                <img
+                  v-for="(e, i) in formData.sedia_even.bets['1000']"
+                  :key="i"
+                  :style="{ top: '-' + i * 2 + 'px' }"
+                  src="../assets/chips/1000.png"
+                  alt=""
+                />
               </div>
               <div
                 v-if="formData.sedia_even.bets['500'] > 0"
                 class="table-chips for-500"
               >
-                <img src="../assets/chips/500.png" alt="" />
+                <img
+                  v-for="(e, i) in formData.sedia_even.bets['500']"
+                  :key="i"
+                  :style="{ top: '-' + i * 2 + 'px' }"
+                  src="../assets/chips/500.png"
+                  alt=""
+                />
               </div>
               <div
                 v-if="formData.sedia_even.bets['100'] > 0"
                 class="table-chips for-100"
               >
-                <img src="../assets/chips/100.png" alt="" />
+                <img
+                  v-for="(e, i) in formData.sedia_even.bets['100']"
+                  :key="i"
+                  :style="{ top: '-' + i * 2 + 'px' }"
+                  src="../assets/chips/100.png"
+                  alt=""
+                />
               </div>
             </div>
             <div class="put-money-panel" v-show="formData.sedia_even.price > 0">
@@ -62,31 +92,61 @@
                 v-if="formData.sedia_fourth_r.bets['10000'] > 0"
                 class="table-chips for-10000"
               >
-                <img src="../assets/chips/10000.png" alt="" />
+                <img
+                  v-for="(e, i) in formData.sedia_fourth_r.bets['10000']"
+                  :key="i"
+                  :style="{ top: '-' + i * 2 + 'px' }"
+                  src="../assets/chips/10000.png"
+                  alt=""
+                />
               </div>
               <div
                 v-if="formData.sedia_fourth_r.bets['5000'] > 0"
                 class="table-chips for-5000"
               >
-                <img src="../assets/chips/5000.png" alt="" />
+                <img
+                  v-for="(e, i) in formData.sedia_fourth_r.bets['5000']"
+                  :key="i"
+                  :style="{ top: '-' + i * 2 + 'px' }"
+                  src="../assets/chips/5000.png"
+                  alt=""
+                />
               </div>
               <div
                 v-if="formData.sedia_fourth_r.bets['1000'] > 0"
                 class="table-chips for-1000"
               >
-                <img src="../assets/chips/1000.png" alt="" />
+                <img
+                  v-for="(e, i) in formData.sedia_fourth_r.bets['1000']"
+                  :key="i"
+                  :style="{ top: '-' + i * 2 + 'px' }"
+                  src="../assets/chips/1000.png"
+                  alt=""
+                />
               </div>
               <div
                 v-if="formData.sedia_fourth_r.bets['500'] > 0"
                 class="table-chips for-500"
               >
-                <img src="../assets/chips/500.png" alt="" />
+                <img
+                  v-for="(e, i) in formData.sedia_fourth_r.bets['500']"
+                  :key="i"
+                  :style="{ top: '-' + i * 2 + 'px' }"
+                  src="../assets/chips/500.png"
+                  alt=""
+                />
               </div>
               <div
                 v-if="formData.sedia_fourth_r.bets['100'] > 0"
                 class="table-chips for-100"
               >
-                <img src="../assets/chips/100.png" alt="" />
+                <img
+                  v-for="(e, i) in formData.sedia_fourth_r.bets['100']"
+                  :key="i"
+                  :style="{ top: '-' + i * 2 + 'px' }"
+                  src="../assets/chips/100.png"
+                  alt=""
+                />
               </div>
             </div>
             <div
@@ -106,31 +166,61 @@
                 v-if="formData.sedia_third_r.bets['10000'] > 0"
                 class="table-chips for-10000"
               >
-                <img src="../assets/chips/10000.png" alt="" />
+                <img
+                  v-for="(e, i) in formData.sedia_third_r.bets['10000']"
+                  :key="i"
+                  :style="{ top: '-' + i * 2 + 'px' }"
+                  src="../assets/chips/10000.png"
+                  alt=""
+                />
               </div>
               <div
                 v-if="formData.sedia_third_r.bets['5000'] > 0"
                 class="table-chips for-5000"
               >
-                <img src="../assets/chips/5000.png" alt="" />
+                <img
+                  v-for="(e, i) in formData.sedia_third_r.bets['5000']"
+                  :key="i"
+                  :style="{ top: '-' + i * 2 + 'px' }"
+                  src="../assets/chips/5000.png"
+                  alt=""
+                />
               </div>
               <div
                 v-if="formData.sedia_third_r.bets['1000'] > 0"
                 class="table-chips for-1000"
               >
-                <img src="../assets/chips/1000.png" alt="" />
+                <img
+                  v-for="(e, i) in formData.sedia_third_r.bets['1000']"
+                  :key="i"
+                  :style="{ top: '-' + i * 2 + 'px' }"
+                  src="../assets/chips/1000.png"
+                  alt=""
+                />
               </div>
               <div
                 v-if="formData.sedia_third_r.bets['500'] > 0"
                 class="table-chips for-500"
               >
-                <img src="../assets/chips/500.png" alt="" />
+                <img
+                  v-for="(e, i) in formData.sedia_third_r.bets['500']"
+                  :key="i"
+                  :style="{ top: '-' + i * 2 + 'px' }"
+                  src="../assets/chips/500.png"
+                  alt=""
+                />
               </div>
               <div
                 v-if="formData.sedia_third_r.bets['100'] > 0"
                 class="table-chips for-100"
               >
-                <img src="../assets/chips/100.png" alt="" />
+                <img
+                  v-for="(e, i) in formData.sedia_third_r.bets['100']"
+                  :key="i"
+                  :style="{ top: '-' + i * 2 + 'px' }"
+                  src="../assets/chips/100.png"
+                  alt=""
+                />
               </div>
             </div>
             <div
@@ -155,31 +245,61 @@
                 v-if="formData.sedia_odd.bets['10000'] > 0"
                 class="table-chips for-10000"
               >
-                <img src="../assets/chips/10000.png" alt="" />
+                <img
+                  v-for="(e, i) in formData.sedia_odd.bets['10000']"
+                  :key="i"
+                  :style="{ top: '-' + i * 2 + 'px' }"
+                  src="../assets/chips/10000.png"
+                  alt=""
+                />
               </div>
               <div
                 v-if="formData.sedia_odd.bets['5000'] > 0"
                 class="table-chips for-5000"
               >
-                <img src="../assets/chips/5000.png" alt="" />
+                <img
+                  v-for="(e, i) in formData.sedia_odd.bets['5000']"
+                  :key="i"
+                  :style="{ top: '-' + i * 2 + 'px' }"
+                  src="../assets/chips/5000.png"
+                  alt=""
+                />
               </div>
               <div
                 v-if="formData.sedia_odd.bets['1000'] > 0"
                 class="table-chips for-1000"
               >
-                <img src="../assets/chips/1000.png" alt="" />
+                <img
+                  v-for="(e, i) in formData.sedia_odd.bets['1000']"
+                  :key="i"
+                  :style="{ top: '-' + i * 2 + 'px' }"
+                  src="../assets/chips/1000.png"
+                  alt=""
+                />
               </div>
               <div
                 v-if="formData.sedia_odd.bets['500'] > 0"
                 class="table-chips for-500"
               >
-                <img src="../assets/chips/500.png" alt="" />
+                <img
+                  v-for="(e, i) in formData.sedia_odd.bets['500']"
+                  :key="i"
+                  :style="{ top: '-' + i * 2 + 'px' }"
+                  src="../assets/chips/500.png"
+                  alt=""
+                />
               </div>
               <div
                 v-if="formData.sedia_odd.bets['100'] > 0"
                 class="table-chips for-100"
               >
-                <img src="../assets/chips/100.png" alt="" />
+                <img
+                  v-for="(e, i) in formData.sedia_odd.bets['100']"
+                  :key="i"
+                  :style="{ top: '-' + i * 2 + 'px' }"
+                  src="../assets/chips/100.png"
+                  alt=""
+                />
               </div>
             </div>
             <div class="put-money-panel" v-show="formData.sedia_odd.price > 0">
@@ -196,31 +316,61 @@
                 v-if="formData.sedia_third_w.bets['10000'] > 0"
                 class="table-chips for-10000"
               >
-                <img src="../assets/chips/10000.png" alt="" />
+                <img
+                  v-for="(e, i) in formData.sedia_third_w.bets['10000']"
+                  :key="i"
+                  :style="{ top: '-' + i * 2 + 'px' }"
+                  src="../assets/chips/10000.png"
+                  alt=""
+                />
               </div>
               <div
                 v-if="formData.sedia_third_w.bets['5000'] > 0"
                 class="table-chips for-5000"
               >
-                <img src="../assets/chips/5000.png" alt="" />
+                <img
+                  v-for="(e, i) in formData.sedia_third_w.bets['5000']"
+                  :key="i"
+                  :style="{ top: '-' + i * 2 + 'px' }"
+                  src="../assets/chips/5000.png"
+                  alt=""
+                />
               </div>
               <div
                 v-if="formData.sedia_third_w.bets['1000'] > 0"
                 class="table-chips for-1000"
               >
-                <img src="../assets/chips/1000.png" alt="" />
+                <img
+                  v-for="(e, i) in formData.sedia_third_w.bets['1000']"
+                  :key="i"
+                  :style="{ top: '-' + i * 2 + 'px' }"
+                  src="../assets/chips/1000.png"
+                  alt=""
+                />
               </div>
               <div
                 v-if="formData.sedia_third_w.bets['500'] > 0"
                 class="table-chips for-500"
               >
-                <img src="../assets/chips/500.png" alt="" />
+                <img
+                  v-for="(e, i) in formData.sedia_third_w.bets['500']"
+                  :key="i"
+                  :style="{ top: '-' + i * 2 + 'px' }"
+                  src="../assets/chips/500.png"
+                  alt=""
+                />
               </div>
               <div
                 v-if="formData.sedia_third_w.bets['100'] > 0"
                 class="table-chips for-100"
               >
-                <img src="../assets/chips/100.png" alt="" />
+                <img
+                  v-for="(e, i) in formData.sedia_third_w.bets['100']"
+                  :key="i"
+                  :style="{ top: '-' + i * 2 + 'px' }"
+                  src="../assets/chips/100.png"
+                  alt=""
+                />
               </div>
             </div>
             <div
@@ -240,31 +390,61 @@
                 v-if="formData.sedia_fourth_w.bets['10000'] > 0"
                 class="table-chips for-10000"
               >
-                <img src="../assets/chips/10000.png" alt="" />
+                <img
+                  v-for="(e, i) in formData.sedia_fourth_w.bets['10000']"
+                  :key="i"
+                  :style="{ top: '-' + i * 2 + 'px' }"
+                  src="../assets/chips/10000.png"
+                  alt=""
+                />
               </div>
               <div
                 v-if="formData.sedia_fourth_w.bets['5000'] > 0"
                 class="table-chips for-5000"
               >
-                <img src="../assets/chips/5000.png" alt="" />
+                <img
+                  v-for="(e, i) in formData.sedia_fourth_w.bets['5000']"
+                  :key="i"
+                  :style="{ top: '-' + i * 2 + 'px' }"
+                  src="../assets/chips/5000.png"
+                  alt=""
+                />
               </div>
               <div
                 v-if="formData.sedia_fourth_w.bets['1000'] > 0"
                 class="table-chips for-1000"
               >
-                <img src="../assets/chips/1000.png" alt="" />
+                <img
+                  v-for="(e, i) in formData.sedia_fourth_w.bets['1000']"
+                  :key="i"
+                  :style="{ top: '-' + i * 2 + 'px' }"
+                  src="../assets/chips/1000.png"
+                  alt=""
+                />
               </div>
               <div
                 v-if="formData.sedia_fourth_w.bets['500'] > 0"
                 class="table-chips for-500"
               >
-                <img src="../assets/chips/500.png" alt="" />
+                <img
+                  v-for="(e, i) in formData.sedia_fourth_w.bets['500']"
+                  :key="i"
+                  :style="{ top: '-' + i * 2 + 'px' }"
+                  src="../assets/chips/500.png"
+                  alt=""
+                />
               </div>
               <div
                 v-if="formData.sedia_fourth_w.bets['100'] > 0"
                 class="table-chips for-100"
               >
-                <img src="../assets/chips/100.png" alt="" />
+                <img
+                  v-for="(e, i) in formData.sedia_fourth_w.bets['100']"
+                  :key="i"
+                  :style="{ top: '-' + i * 2 + 'px' }"
+                  src="../assets/chips/100.png"
+                  alt=""
+                />
               </div>
             </div>
             <div
@@ -897,6 +1077,14 @@ $main-color: #34185d;
       transform: skew(-3.5deg, 0deg);
       color: #c48dff;
       box-sizing: border-box;
+
+      .put-chips-panel {
+        transform: skew(3.5deg, 0deg);
+      }
+
+      .put-money-panel {
+        transform: skew(3.5deg, 0deg);
+      }
     }
 
     > .right-side {
@@ -904,6 +1092,14 @@ $main-color: #34185d;
       transform: skew(3.5deg, 0deg);
       color: #c48dff;
       box-sizing: border-box;
+
+      .put-chips-panel {
+        transform: skew(-3.5deg, 0deg);
+      }
+
+      .put-money-panel {
+        transform: skew(-3.5deg, 0deg);
+      }
     }
   }
 }
