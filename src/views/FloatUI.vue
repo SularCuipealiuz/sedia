@@ -472,7 +472,7 @@ $highlight: #ffc51a;
       border-top-right-radius: 15px;
       border-bottom-right-radius: 15px;
 
-      @media only screen and (min-device-width: 375px) and (max-device-width: 812px) {
+      @media only screen and (device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3) {
         left: -45px;
       }
 
@@ -667,11 +667,10 @@ $highlight: #ffc51a;
       border-bottom-right-radius: 7px;
       height: 42px;
       width: 50px;
+      position: absolute;
 
-      @media only screen and (min-device-width: 375px) and (max-device-width: 812px) {
+      @media only screen and (device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3) {
         padding-left: 35px;
-        position: absolute;
-        left: 0;
       }
 
       img {
@@ -698,17 +697,17 @@ $highlight: #ffc51a;
       top: 30%;
       transition: right 0.35s linear 0s;
 
-      @media only screen and (min-device-width: 375px) and (max-device-width: 812px) {
+      @media only screen and (device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3) {
         padding-right: 30px;
       }
 
       &.open-history-tab {
         right: 130px;
 
-        @media only screen and (min-device-width: 375px) and (max-device-width: 812px) {
+        @media only screen and (device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3) {
           padding-right: 0px;
         }
-        @media only screen and (min-device-width: 375px) and (max-device-width: 812px) {
+        @media only screen and (device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3) {
           right: 160px;
         }
       }
@@ -1027,7 +1026,7 @@ $highlight: #ffc51a;
 
   &.open-history-tab {
     right: 0;
-    @media only screen and (min-device-width: 375px) and (max-device-width: 812px) {
+    @media only screen and (device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3) {
       right: 30px;
     }
   }
