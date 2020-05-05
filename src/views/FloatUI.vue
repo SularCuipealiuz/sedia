@@ -140,7 +140,7 @@
       </div>
     </div>
     <div class="ui-float">
-      <div class="stop-watch-panel">
+      <div class="stop-watch-panel" v-show="showClock">
         <div class="stop-watch">
           <img class="ten-digit clock" :src="showTenDigitTime" alt="" />
           <img class="digit clock" :src="showDigitTime" alt="" />
@@ -254,7 +254,8 @@ export default {
       "lotteryName",
       "desktopObjList",
       "historyTab",
-      "plateChip"
+      "plateChip",
+      "showClock"
     ]),
     showTenDigitTime() {
       return require(`../assets/alarm/time-${parseInt(

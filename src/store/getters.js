@@ -26,6 +26,7 @@ const getters = {
   even: state => state.views.noticeState.even,
   odd: state => state.views.noticeState.odd,
   plateChip: state => state.views.plateChip,
-  currFullExpect: state => state.views.curr_full_expect
+  currFullExpect: state => state.views.curr_full_expect,
+  showClock: state => state.views.showClock
 };
 export default getters;

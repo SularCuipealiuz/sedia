@@ -467,7 +467,10 @@
       <div class="bowl-panel dish-animation ">
         <img
           class="bowl"
-          :class="{ 'open-animation': ani.openBowl }"
+          :class="{
+            'open-animation': ani.openBowl,
+            'bowl-shake-animation': ani.shake
+          }"
           src="../assets/dish/bowl.png"
           alt=""
         />
@@ -587,7 +590,13 @@
 </template>
 
 <script>
-import { lotteryrates, cpbuy, loadopencode, checkislogin } from "@/api";
+import {
+  lotteryrates,
+  cpbuy,
+  loadopencode,
+  checkislogin,
+  betsContent
+} from "@/api";
 import { mapGetters } from "vuex";
 
 export default {
@@ -600,7 +609,8 @@ export default {
       "lotteryName",
       "desktopView",
       "pleasePutChip",
-      "balance"
+      "balance",
+      "stopWatchTime"
     ])
   },
   created() {
@@ -673,6 +683,7 @@ export default {
                   _this.ani.scaleMove = false;
                   _this.ani.openBowl = false;
                   _this.$bus.$emit("refreshBtnState");
+                  _this.shaking = false;
 
                   console.log("復歸完成");
                   _this.startToNewGame();
@@ -683,6 +694,26 @@ export default {
         }
       });
     }
+    this.$bus.$on("shake", function() {
+      _this.shaking = true;
+      _this.ani.scaleMove = true;
+
+      _this.$store.dispatch("views/disableAllNoticeState").then(() => {
+        _this.$store.dispatch("views/openNotReady").then(() => {
+          setTimeout(function() {
+            _this.ani.shake = true;
+            setTimeout(function() {
+              _this.ani.scaleMoveOut = true;
+              setTimeout(function() {
+                _this.ani.scaleMove = false;
+                _this.ani.scaleMoveOut = false;
+                _this.ani.shake = false;
+              }, 1000);
+            }, 2700);
+          }, 800);
+        });
+      });
+    });
     this.$bus.$on("scaleMove", function() {
       _this.ani.scaleMove = true;
       openCode();
@@ -730,9 +761,15 @@ export default {
       _this.clearDesktopMonetAndChips();
     });
     this.$bus.$on("btnAgain", function() {
-      const _this = this;
       const lastPutList = _this.desktopView[_this.currIndex - 1].last_put_list;
       console.log("響應", lastPutList);
+
+      _this.$set(_this.formData, "sedia_even", lastPutList.sedia_even);
+      _this.$set(_this.formData, "sedia_odd", lastPutList.sedia_odd);
+      _this.$set(_this.formData, "sedia_fourth_r", lastPutList.sedia_fourth_r);
+      _this.$set(_this.formData, "sedia_third_r", lastPutList.sedia_third_r);
+      _this.$set(_this.formData, "sedia_third_w", lastPutList.sedia_third_w);
+      _this.$set(_this.formData, "sedia_fourth_w", lastPutList.sedia_fourth_w);
     });
     this.$bus.$on("refreshBtnState", function() {
       _this.$nextTick(function() {
@@ -752,12 +789,15 @@ export default {
   },
   data() {
     return {
+      isBought: false,
+      shaking: false,
       put_list: {},
       desk_chip_cover: false,
       ani: {
         scaleMove: false,
         scaleMoveOut: false,
-        openBowl: false
+        openBowl: false,
+        shake: false
       },
       desktop: {
         sedia_even: "",
@@ -914,35 +954,94 @@ export default {
         }
       }
     },
-    startToNewGame() {
+    async startToNewGame() {
       // 應檢查是否已下過注
       // 以下功能應針對"全桌"
       console.log("開新局");
       const _this = this;
 
-      if (Object.keys(_this.put_list).length > 0) {
-        _this.$store
-          .dispatch("views/setLastPutListForAll", _this.put_list)
-          .then(() => {
-            _this.put_list = {};
-            const lastPutList = JSON.parse(
-              JSON.stringify(
-                _this.desktopView[_this.currIndex - 1].last_put_list
-              )
-            );
-            if (_this.balance > 100) {
-              if (Object.keys(lastPutList).length > 0) {
-                console.log("有進對吧");
-                _this.$store.dispatch("views/setBtnAgainForAll", true);
-              }
-            }
+      betsContent({
+        expect: _this.currFullExpect,
+        lotteryname: _this.lotteryName
+      }).then(e => {
+        console.log("betsContent", e);
+
+        if (e.data.length > 0) {
+          _this.isBought = true;
+        }
+      });
+
+      function doShake() {
+        return new Promise(resolve => {
+          _this.shaking = true;
+          _this.ani.scaleMove = true;
+
+          _this.$store.dispatch("views/disableAllNoticeState").then(() => {
+            _this.$store.dispatch("views/openNotReady").then(() => {
+              setTimeout(function() {
+                _this.ani.shake = true;
+                setTimeout(function() {
+                  _this.ani.scaleMoveOut = true;
+                  setTimeout(function() {
+                    _this.ani.scaleMove = false;
+                    _this.ani.scaleMoveOut = false;
+                    _this.ani.shake = false;
+                    resolve("go");
+                  }, 1000);
+                }, 2700);
+              }, 800);
+            });
           });
+        });
       }
 
-      if (_this.balance > 100) {
-        _this.$store.dispatch("views/setBtnCancelForAll", true);
-        _this.$store.dispatch("views/setBtnAgreeForAll", true);
-        _this.$store.dispatch("views/setChipsPlateForAll", true);
+      function doReset() {
+        if (Object.keys(_this.put_list).length > 0) {
+          _this.$store
+            .dispatch("views/setLastPutListForAll", _this.put_list)
+            .then(() => {
+              _this.put_list = {};
+              const lastPutList = JSON.parse(
+                JSON.stringify(
+                  _this.desktopView[_this.currIndex - 1].last_put_list
+                )
+              );
+              if (_this.balance > 100) {
+                if (Object.keys(lastPutList).length > 0) {
+                  _this.$store.dispatch("views/setBtnAgainForAll", true);
+                }
+                _this.$store.dispatch("views/setBtnCancelForAll", true);
+                _this.$store.dispatch("views/setBtnAgreeForAll", true);
+                _this.$store.dispatch("views/setChipsPlateForAll", true);
+              }
+            });
+        } else {
+          if (_this.balance > 100) {
+            _this.$store.dispatch("views/setBtnCancelForAll", true);
+            _this.$store.dispatch("views/setBtnAgreeForAll", true);
+            _this.$store.dispatch("views/setChipsPlateForAll", true);
+          }
+        }
+      }
+
+      if (
+        _this.stopWatchTime > 25 &&
+        _this.shaking === false &&
+        _this.isBought === false
+      ) {
+        await doShake().then(() => {
+          doReset();
+          setTimeout(function() {
+            _this.$bus.$emit("refreshBtnState");
+            _this.$store.dispatch("views/setShowClock", true);
+          }, 300);
+        });
+      } else {
+        doReset();
+        setTimeout(function() {
+          _this.$bus.$emit("refreshBtnState");
+          _this.$store.dispatch("views/setShowClock", true);
+        }, 300);
       }
     },
     isEvenOdd(str) {
@@ -1273,7 +1372,7 @@ $main-color: #34185d;
 
 .bowl-shake-animation {
   animation: aniShake linear 0.8s;
-  animation-delay: 1.1s;
+  animation-delay: 1s;
   animation-iteration-count: 2;
   transform-origin: 50% 50%;
 }

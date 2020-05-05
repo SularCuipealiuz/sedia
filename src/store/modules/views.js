@@ -28,7 +28,8 @@ const state = {
     odd: false
   },
   plateChip: 0,
-  curr_full_expect: ""
+  curr_full_expect: "",
+  showClock: false
 };
 
 const mutations = {
@@ -171,7 +172,10 @@ const mutations = {
     for (let key in state.desktop_view) {
       state.desktop_view[key].last_put_list = array;
     }
-  }
+  },
+  SET_SHOW_CLOCK: (state, boolean) => {
+    state.showClock = boolean;
+  },
 };
 
 const actions = {
@@ -343,6 +347,9 @@ const actions = {
   },
   setChipsPlateForAll: ({ commit }, boolean) => {
     commit("SET_CHIPS_PLATE_FOR_ALL", boolean);
+  },
+  setShowClock: ({ commit }, boolean) => {
+    commit("SET_SHOW_CLOCK", boolean);
   }
 };
 

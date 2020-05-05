@@ -74,8 +74,7 @@
 import {
   lotterylists,
   lotteryopencodes,
-  lotterytimes,
-  betsContent
+  lotterytimes
 } from "@/api/index";
 import { mapGetters } from "vuex";
 
@@ -103,12 +102,6 @@ export default {
       this.updateHallView();
     });
 
-    betsContent({
-      expect: _this.currFullExpect,
-      lotteryname: _this.lotteryName
-    }).then(e => {
-      console.log("betsContent", e);
-    });
   },
   computed: {
     ...mapGetters([
@@ -172,6 +165,7 @@ export default {
             console.log("over");
 
             setTimeout(function() {
+              _this.$store.dispatch("views/setShowClock", false);
               _this.$store.dispatch("views/disableAllNoticeState").then(() => {
                 _this.$store.dispatch("views/openIsOpening").then(() => {
                   _this.$bus.$emit("refreshBtnState");
