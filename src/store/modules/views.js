@@ -14,6 +14,7 @@ const state = {
   balance: 0,
   stopWatchTime: 0,
   betsRecordURL: "",
+  redirectHailURL: "",
   playerCount: 0,
   lotteryName: "",
   desktopObjList: [],
@@ -90,6 +91,9 @@ const mutations = {
   },
   SET_LOG_URL: (state, url) => {
     state.betsRecordURL = url;
+  },
+  SET_HAIL_URL:(state, url) =>{
+    state.redirectHailURL = url;
   },
   SET_PLAYER_COUNT: (state, num) => {
     state.playerCount = num;
@@ -176,6 +180,9 @@ const mutations = {
   SET_SHOW_CLOCK: (state, boolean) => {
     state.showClock = boolean;
   },
+  TOGGLE_AUTO_PLAY: (state, boolean) => {
+    state.desktop_view[state.curr_index - 1].auto_play = boolean;
+  }
 };
 
 const actions = {
@@ -260,6 +267,9 @@ const actions = {
   },
   setLogUrl: ({ commit }, url) => {
     commit("SET_LOG_URL", url);
+  },
+  setRedirectHailURL: ({ commit }, url) => {
+    commit("SET_HAIL_URL", url);
   },
   setDesktopObjList: ({ commit }, obj) => {
     commit("SET_DESKTOP_OBJ", obj);
@@ -350,6 +360,9 @@ const actions = {
   },
   setShowClock: ({ commit }, boolean) => {
     commit("SET_SHOW_CLOCK", boolean);
+  },
+  toggleAutoPlay: ({ commit }, boolean) => {
+    commit("TOGGLE_AUTO_PLAY", boolean);
   }
 };
 

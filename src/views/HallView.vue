@@ -6,7 +6,7 @@
         <div class="icon-btn">
           <img src="../assets/hall/info-circle.png" alt="" />
         </div>
-        <div class="icon-btn">
+        <div class="icon-btn exit-icon-btn" @click="exitGame">
           <img src="../assets/hall/sign-out.png" alt="" />
         </div>
       </div>
@@ -71,11 +71,7 @@
 </template>
 
 <script>
-import {
-  lotterylists,
-  lotteryopencodes,
-  lotterytimes
-} from "@/api/index";
+import { lotterylists, lotteryopencodes, lotterytimes } from "@/api/index";
 import { mapGetters } from "vuex";
 
 export default {
@@ -101,7 +97,6 @@ export default {
 
       this.updateHallView();
     });
-
   },
   computed: {
     ...mapGetters([
@@ -110,7 +105,8 @@ export default {
       "currIndex",
       "desktopObjList",
       "currFullExpect",
-      "lotteryName"
+      "lotteryName",
+      "redirectHailURL"
     ])
   },
   data() {
@@ -125,6 +121,16 @@ export default {
     };
   },
   methods: {
+    exitGame() {
+      console.log("exit");
+      const _this = this;
+      window.parent.postMessage(
+        {
+          redirectHailURL: _this.redirectHailURL
+        },
+        "*"
+      );
+    },
     sliceHistoryList(list) {
       if (list !== undefined) {
         if (list.length > 10) {

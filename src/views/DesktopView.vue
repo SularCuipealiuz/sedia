@@ -8,6 +8,7 @@
         <div class="flex row left-side">
           <div
             class="desk-chip-panel flex center"
+            :class="{ 'box-highlight': formData.sedia_even.highlight }"
             @click="putMoneyOnBoard('sedia_even')"
           >
             {{ desktop.sedia_even.title }}
@@ -83,6 +84,7 @@
           <div class="desk-holder"></div>
           <div
             class="desk-chip-panel flex center"
+            :class="{ 'box-highlight': formData.sedia_fourth_r.highlight }"
             @click="putMoneyOnBoard('sedia_fourth_r')"
           >
             1:{{ desktop.sedia_fourth_r.maxrate }}
@@ -158,6 +160,7 @@
           </div>
           <div
             class="desk-chip-panel flex center"
+            :class="{ 'box-highlight': formData.sedia_third_r.highlight }"
             @click="putMoneyOnBoard('sedia_third_r')"
           >
             1:{{ desktop.sedia_third_r.maxrate }}
@@ -235,6 +238,7 @@
           <div class="desk-holder"></div>
           <div
             class="desk-chip-panel flex center"
+            :class="{ 'box-highlight': formData.sedia_odd.highlight }"
             @click="putMoneyOnBoard('sedia_odd')"
           >
             {{ desktop.sedia_odd.title }}
@@ -308,6 +312,7 @@
           </div>
           <div
             class="desk-chip-panel flex center"
+            :class="{ 'box-highlight': formData.sedia_third_w.highlight }"
             @click="putMoneyOnBoard('sedia_third_w')"
           >
             1:{{ desktop.sedia_third_w.maxrate }}
@@ -382,6 +387,7 @@
           </div>
           <div
             class="desk-chip-panel flex center"
+            :class="{ 'box-highlight': formData.sedia_fourth_w.highlight }"
             @click="putMoneyOnBoard('sedia_fourth_w')"
           >
             1:{{ desktop.sedia_fourth_w.maxrate }}
@@ -474,7 +480,14 @@
           src="../assets/dish/bowl.png"
           alt=""
         />
-        <img class="plate" src="../assets/dish/plate.png" alt="" />
+        <img
+          class="plate"
+          :class="{
+            'bowl-shake-animation': ani.shake
+          }"
+          src="../assets/dish/plate.png"
+          alt=""
+        />
         <div
           v-show="paperGroup.p1"
           class="paper-panel-css paper-panel-1 fadein-animation non-visible"
@@ -659,10 +672,17 @@ export default {
                     const b = _this.isEvenOdd(e.data.opencode);
                     if (b === 0) {
                       _this.$store.dispatch("views/openEvenNotice").then(() => {
+                        _this.formData.sedia_even.highlight = true;
+                        _this.formData.sedia_fourth_r.highlight = true;
+                        _this.formData.sedia_fourth_w.highlight = true;
+
                         console.log("show");
                       });
                     } else {
                       _this.$store.dispatch("views/openOddNotice").then(() => {
+                        _this.formData.sedia_odd.highlight = true;
+                        _this.formData.sedia_third_r.highlight = true;
+                        _this.formData.sedia_third_w.highlight = true;
                         console.log("show");
                       });
                     }
@@ -717,6 +737,20 @@ export default {
     this.$bus.$on("scaleMove", function() {
       _this.ani.scaleMove = true;
       openCode();
+    });
+    this.$bus.$on("btnAutoPlay", function() {
+      const lastPutList = _this.desktopView[_this.currIndex - 1].last_put_list;
+
+      if (_this.balance > 100) {
+        if (Object.keys(lastPutList).length > 0) {
+          // 更新store狀態
+          _this.$store.dispatch("views/toggleAutoPlay", !_this.auto_play);
+          _this.$bus.$emit("btnAgain");
+          setTimeout(function() {
+            _this.$bus.$emit("btnAgree");
+          }, 1000);
+        }
+      }
     });
     this.$bus.$on("btnAgree", function() {
       if (_this.deskInfo.index === _this.currIndex) {
@@ -809,6 +843,7 @@ export default {
       },
       formData: {
         sedia_even: {
+          highlight: false,
           playid: "sedia_even",
           price: 0,
           bets: {
@@ -820,6 +855,7 @@ export default {
           }
         },
         sedia_odd: {
+          highlight: false,
           playid: "sedia_odd",
           price: 0,
           bets: {
@@ -831,6 +867,7 @@ export default {
           }
         },
         sedia_fourth_r: {
+          highlight: false,
           playid: "sedia_fourth_r",
           price: 0,
           bets: {
@@ -842,6 +879,7 @@ export default {
           }
         },
         sedia_third_r: {
+          highlight: false,
           playid: "sedia_third_r",
           price: 0,
           bets: {
@@ -853,6 +891,7 @@ export default {
           }
         },
         sedia_third_w: {
+          highlight: false,
           playid: "sedia_third_w",
           price: 0,
           bets: {
@@ -864,6 +903,7 @@ export default {
           }
         },
         sedia_fourth_w: {
+          highlight: false,
           playid: "sedia_fourth_w",
           price: 0,
           bets: {
@@ -949,6 +989,7 @@ export default {
       const _this = this;
       for (let key in _this.formData) {
         _this.formData[key].price = 0;
+        _this.formData[key].highlight = false;
         for (let key2 in _this.formData[key].bets) {
           _this.formData[key].bets[key2] = 0;
         }
@@ -1501,5 +1542,15 @@ $main-color: #34185d;
   100% {
     transform: translate(0px, 0px) scale(1);
   }
+}
+
+.box-highlight {
+  transition-delay: 3s;
+  transition-duration: 1s;
+  background: -webkit-radial-gradient(
+    rgba(255, 255, 255, 0.2),
+    rgba(255, 255, 255, 0) 70%
+  );
+  transition: all 0 cubic-bezier(0.68, -0.55, 0.265, 1.55);
 }
 </style>

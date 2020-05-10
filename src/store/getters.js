@@ -12,6 +12,7 @@ const getters = {
   balance: state => state.views.balance,
   stopWatchTime: state => state.views.stopWatchTime,
   betsRecordURL: state => state.views.betsRecordURL,
+  redirectHailURL: state => state.views.redirectHailURL,
   playerCount: state => state.views.playerCount,
   lotteryName: state => state.views.lotteryName,
   desktopObjList: state => state.views.desktopObjList,

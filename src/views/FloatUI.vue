@@ -106,7 +106,11 @@
             </div>
           </div>
           <div class="flex center auto-button-panel">
-            <div class="flex center auto-button">
+            <div
+              class="flex center auto-button"
+              :class="{ 'active-auto-button': auto_play === true }"
+              @click="btnAutoPlay"
+            >
               <span>AUTO PLAY</span>
             </div>
           </div>
@@ -258,20 +262,31 @@ export default {
       "showClock"
     ]),
     showTenDigitTime() {
-      return require(`../assets/alarm/time-${parseInt(
-        this.stopWatchTime / 10
-      )}.png`);
+      const _this = this;
+      if (this.stopWatchTime > 0) {
+        return require(`../assets/alarm/time-${parseInt(
+          _this.stopWatchTime / 10
+        )}.png`);
+      } else {
+        return require(`../assets/alarm/time-0.png`);
+      }
     },
     showDigitTime() {
-      return require(`../assets/alarm/time-${parseInt(
-        this.stopWatchTime % 10
-      )}.png`);
+      const _this = this;
+      if (this.stopWatchTime > 0) {
+        return require(`../assets/alarm/time-${parseInt(
+          _this.stopWatchTime % 10
+        )}.png`);
+      } else {
+        return require(`../assets/alarm/time-0.png`);
+      }
     }
   },
   data() {
     return {
       timer: null,
       historyList: [],
+      auto_play: false,
       btn_again: false,
       btn_cancel: false,
       btn_agree: false,
@@ -284,6 +299,11 @@ export default {
     this.$bus.$on("refreshBtnState", function() {
       console.log("進，綁定按鈕狀態");
       _this.$nextTick(function() {
+        _this.$set(
+          _this,
+          "auto_play",
+          _this.desktopView[_this.currIndex - 1].auto_play
+        );
         _this.$set(
           _this,
           "btn_again",
@@ -310,8 +330,21 @@ export default {
       _this.total_bet = totalBetValue;
       _this.$store.dispatch("views/setTotalBet", totalBetValue);
     });
+
+    this.$bus.$on("btnAutoPlay", function() {
+      _this.$nextTick(function() {
+        _this.$set(
+          _this,
+          "auto_play",
+          _this.desktopView[_this.currIndex - 1].auto_play
+        );
+      });
+    });
   },
   methods: {
+    btnAutoPlay() {
+      this.$bus.$emit("btnAutoPlay");
+    },
     btnAgree() {
       this.$bus.$emit("btnAgree");
     },
@@ -334,7 +367,6 @@ export default {
         "historyList",
         _this.desktopObjList.find(e => e.index === _this.currIndex).historyList
       );
-      //TODO 问题，没有实际绑定到原始对象（find过程中已经另产新对象）
     },
     goToHall() {
       const _this = this;
@@ -836,7 +868,7 @@ $highlight: #ffc51a;
           }
         }
 
-        > .auto-button:hover {
+        & .active-auto-button {
           height: 45px;
           width: 100px;
           border: 2px #f5bf26 solid;
