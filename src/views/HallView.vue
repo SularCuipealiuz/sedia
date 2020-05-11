@@ -347,7 +347,26 @@ export default {
   align-items: center;
   color: white;
   overflow-x: auto;
-  margin-top: -8px;
+  overflow-y: hidden;
+}
+
+@media only screen and (min-width: 850px) {
+  .desk-panel::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+    background-color: #f5f5f5;
+  }
+
+  .desk-panel::-webkit-scrollbar {
+    width: 12px;
+    background-color: #f5f5f5;
+  }
+
+  .desk-panel::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+    background-color: #555;
+  }
 }
 
 .desktop {
